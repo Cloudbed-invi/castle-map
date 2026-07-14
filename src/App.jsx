@@ -364,77 +364,65 @@ function App() {
           <button onClick={handleExportImage} style={{ padding: '0.5rem 1rem', borderRadius: '6px', backgroundColor: '#10b981', color: 'white', border: 'none', cursor: 'pointer' }}>
             Export Image
           </button>
-          <button onClick={() => setShowToolbar(!showToolbar)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #cbd5e1', cursor: 'pointer' }}>
-            {showToolbar ? 'Hide Tools' : 'Show Tools'}
-          </button>
         </div>
       </header>
 
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         
-        {showToolbar && (
-          <div className="toolbar" style={{ backgroundColor: 'white', borderRadius: '8px', marginBottom: '20px', width: '100%', maxWidth: '840px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginRight: '10px' }}>
-              <button 
-                onClick={() => setInteractionMode('draw')}
-                style={{ padding: '0.4rem 0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: interactionMode === 'draw' ? '#e2e8f0' : 'white', cursor: 'pointer', fontWeight: interactionMode === 'draw' ? 'bold' : 'normal' }}
-              >
-                🖌️ Draw
-              </button>
-              <button 
-                onClick={() => setInteractionMode('pan')}
-                style={{ padding: '0.4rem 0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: interactionMode === 'pan' ? '#e2e8f0' : 'white', cursor: 'pointer', fontWeight: interactionMode === 'pan' ? 'bold' : 'normal' }}
-              >
-                🖐️ Pan / Zoom
-              </button>
-            </div>
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', opacity: interactionMode === 'draw' ? 1 : 0.5, pointerEvents: interactionMode === 'draw' ? 'auto' : 'none' }}>
-              <span style={{ fontWeight: 'bold', color: '#334155' }}>Add to Palette:</span>
-              <div className="color-options">
-                {['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#000000'].map(rc => (
-                  <div 
-                    key={rc}
-                    className="color-swatch"
-                    style={{ backgroundColor: rc }}
-                    onClick={() => handleAddColor(rc)}
-                    title="Add to palette"
-                  />
-                ))}
-                <div className="color-picker-wrapper" style={{ width: '28px', height: '28px' }}>
-                   <input 
-                     type="color" 
-                     className="color-picker-input"
-                     onChange={(e) => handleAddColor(e.target.value)}
-                     title="Add custom color"
-                   />
-                   <div className="color-picker-btn" style={{ fontSize: '1.2rem' }}>+</div>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ width: '2px', height: '30px', backgroundColor: '#e2e8f0' }}></div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <span style={{ fontWeight: 'bold', color: '#334155' }}>Active Color:</span>
-              <div className="color-options">
-                {paletteColors.length === 0 && <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>None added</span>}
-                {paletteColors.map((color, index) => (
-                  <div
-                    key={`${color}-${index}`}
-                    className={`color-swatch ${activeColor === color ? 'active' : ''}`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => setActiveColor(color)}
-                    title={legendMap[color] || 'Unlabeled'}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className="live-container" style={{ backgroundColor: 'white', width: '100%', maxWidth: '840px', borderRadius: '8px' }}>
+          <div className="map-tools-overlay">
+            <button 
+              className={interactionMode === 'draw' ? 'active' : ''} 
+              onClick={() => setInteractionMode('draw')}
+              title="Draw Mode"
+            >
+              🖌️ Draw
+            </button>
+            <button 
+              className={interactionMode === 'pan' ? 'active' : ''} 
+              onClick={() => setInteractionMode('pan')}
+              title="Pan / Zoom Mode"
+            >
+              🖐️ Pan
+            </button>
+          </div>
+
           {mapAndLegend(false)}
+
+          <div className="palette-overlay">
+            <span style={{ fontWeight: 'bold', color: '#334155', alignSelf: 'center', marginRight: '10px' }}>Palette:</span>
+            {['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#000000'].map(rc => (
+              <div 
+                key={rc}
+                className="color-swatch"
+                style={{ backgroundColor: rc }}
+                onClick={() => handleAddColor(rc)}
+                title="Add to palette"
+              />
+            ))}
+            <div className="color-picker-wrapper" style={{ width: '28px', height: '28px' }}>
+               <input 
+                 type="color" 
+                 className="color-picker-input"
+                 onChange={(e) => handleAddColor(e.target.value)}
+                 title="Add custom color"
+               />
+               <div className="color-picker-btn" style={{ fontSize: '1.2rem' }}>+</div>
+            </div>
+
+            <div style={{ width: '2px', height: '28px', backgroundColor: '#e2e8f0', margin: '0 10px' }}></div>
+            
+            {paletteColors.length === 0 && <span style={{ fontSize: '0.8rem', color: '#94a3b8', alignSelf: 'center' }}>None selected</span>}
+            {paletteColors.map((color, index) => (
+              <div
+                key={`${color}-${index}`}
+                className={`color-swatch ${activeColor === color ? 'active' : ''}`}
+                style={{ backgroundColor: color }}
+                onClick={() => setActiveColor(color)}
+                title={legendMap[color] || 'Unlabeled'}
+              />
+            ))}
+          </div>
         </div>
 
         {showSettings && (

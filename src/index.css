@@ -87,7 +87,7 @@ body {
   align-items: center;
   max-width: 800px;
   width: 100%;
-  aspect-ratio: 1/1;
+  aspect-ratio: 800 / 650;
   overflow: hidden;
 }
 
@@ -95,6 +95,96 @@ svg {
   width: 100%;
   height: 100%;
   touch-action: none;
+}
+
+.live-container {
+  position: relative;
+  background-color: white;
+  width: 100%;
+  max-width: 840px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.map-tools-overlay {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+.map-tools-overlay button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: white;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.map-tools-overlay button:hover {
+  background: #f1f5f9;
+}
+
+.map-tools-overlay button.active {
+  background: #eff6ff;
+  color: var(--accent-color);
+  border-color: #bfdbfe;
+}
+
+.reset-view-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  z-index: 10;
+  transition: all 0.2s;
+}
+
+.reset-view-btn:hover {
+  background: #f8fafc;
+  transform: scale(1.05);
+}
+
+.palette-overlay {
+  margin-top: -10px;
+  margin-bottom: 20px;
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  z-index: 10;
 }
 
 .settings-modal-overlay {

@@ -1,5 +1,18 @@
 import React, { useRef, useState } from 'react';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { TransformWrapper, TransformComponent, useControls } from 'react-zoom-pan-pinch';
+
+const MapControls = () => {
+  const { resetTransform } = useControls();
+  return (
+    <button 
+      className="reset-view-btn" 
+      onClick={() => resetTransform()} 
+      title="Reset View"
+    >
+      🔄
+    </button>
+  );
+};
 
 function getCellNumber(u, v) {
   let r = Math.min(u, 13 - u, v, 13 - v);
@@ -282,7 +295,9 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
   const svgContent = (
     <svg 
       ref={svgRef}
-      width="100%" height="100%" viewBox="-400 -50 800 800"
+      width={isExport ? "800" : "100%"} 
+      height={isExport ? "650" : "100%"} 
+      viewBox="-400 -50 800 650"
       onPointerDown={() => { if (setSelectedTextId) setSelectedTextId(null); }}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -351,7 +366,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
 
   if (isExport) {
     return (
-      <div className="map-container" style={{ padding: 0, width: '800px', height: '800px' }}>
+      <div className="map-container" style={{ padding: 0, width: '800px', height: '650px' }}>
         {svgContent}
       </div>
     );
@@ -373,6 +388,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
         <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
           {svgContent}
         </TransformComponent>
+        <MapControls />
       </TransformWrapper>
     </div>
   );
