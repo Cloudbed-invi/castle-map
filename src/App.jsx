@@ -286,7 +286,7 @@ function App() {
       <header className="header">
         <h1>SunFire Interactive Map</h1>
         <p>Interactive diamond grid map editor</p>
-        <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+        <div className="header-buttons" style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
           <button onClick={() => setShowHelp(true)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', backgroundColor: '#3b82f6', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             ❓ Instructions
           </button>
@@ -314,7 +314,7 @@ function App() {
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         
         {showToolbar && (
-          <div className="toolbar" style={{ backgroundColor: 'white', padding: '15px 30px', borderRadius: '8px', marginBottom: '20px', width: '100%', maxWidth: '840px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center' }}>
+          <div className="toolbar" style={{ backgroundColor: 'white', borderRadius: '8px', marginBottom: '20px', width: '100%', maxWidth: '840px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               <span style={{ fontWeight: 'bold', color: '#334155' }}>Add to Palette:</span>
               <div className="color-options">
@@ -359,7 +359,7 @@ function App() {
           </div>
         )}
 
-        <div className="export-container" ref={exportRef} style={{ backgroundColor: 'white', padding: '40px', width: '100%', maxWidth: '840px', borderRadius: '8px' }}>
+        <div className="export-container" ref={exportRef} style={{ backgroundColor: 'white', width: '100%', maxWidth: '840px', borderRadius: '8px' }}>
           
           <MapGrid 
             cellColors={cellColors}

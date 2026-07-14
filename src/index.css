@@ -45,6 +45,14 @@ body {
   width: 100%;
 }
 
+.toolbar {
+  padding: 15px 30px;
+}
+
+.export-container {
+  padding: 40px;
+}
+
 .header {
   text-align: center;
 }
@@ -209,6 +217,61 @@ svg {
   stroke-linejoin: round;
   transition: opacity 0.3s ease;
   cursor: grab;
+}
+
+.drag-node {
+  cursor: grab;
+}
+
+.drag-node:active {
+  cursor: grabbing;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .header h1 {
+    font-size: 1.8rem;
+  }
+
+  .header-buttons {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .header-buttons button {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem !important;
+  }
+
+  .toolbar {
+    padding: 10px 15px;
+    gap: 10px !important;
+    justify-content: center;
+  }
+
+  .export-container {
+    padding: 15px !important;
+  }
+  
+  .map-container {
+    padding: 0.5rem;
+  }
+
+  .export-legend {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 15px;
+  }
+
+  .export-legend > div:last-child {
+    text-align: left !important;
+    margin-left: 0 !important;
+  }
 }
 
 .zigzag-path:active {
