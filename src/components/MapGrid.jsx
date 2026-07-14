@@ -52,6 +52,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
 
       const cellElement = (
         <g key={`${u}-${v}`} 
+           data-cell={num}
            onPointerDown={(e) => label ? null : onCellPointerDown(e, num)}
            onPointerEnter={(e) => label ? null : onCellPointerEnter(e, num)}
         >
@@ -100,7 +101,22 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
   };
 
   const handlePointerMove = (e) => {
-    if (!dragState || !svgRef.current) return;
+    if (!dragState) {
+      if (interactionMode === 'draw' && e.buttons === 1) {
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        if (el) {
+          const g = el.closest('[data-cell]');
+          if (g) {
+            const num = parseInt(g.getAttribute('data-cell'), 10);
+            if (!isNaN(num) && onCellPointerEnter) {
+              onCellPointerEnter(e, num);
+            }
+          }
+        }
+      }
+      return;
+    }
+    if (!svgRef.current) return;
     const svg = svgRef.current;
     const pt = svg.createSVGPoint();
     pt.x = e.clientX;
