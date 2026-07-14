@@ -318,9 +318,9 @@ function App() {
         <div className="export-legend" style={{ marginTop: '20px', padding: '15px', border: '2px solid #e2e8f0', borderRadius: '8px', backgroundColor: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ flex: 1 }}>
             {paletteColors.some(c => legendMap[c]?.trim()) && <h3 style={{ margin: '0 0 10px 0', fontSize: '1.1rem', color: '#0f172a' }}>Map Key</h3>}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '10px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
               {paletteColors.filter(c => legendMap[c]?.trim()).map((color, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 'max-content' }}>
                   <div style={{ width: '24px', height: '24px', backgroundColor: color, border: '1px solid #ccc', borderRadius: '4px' }} />
                   <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#334155' }}>
                     {legendMap[color]}

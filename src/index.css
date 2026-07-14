@@ -468,17 +468,6 @@ svg {
     bottom: 85px;
     right: 15px;
   }
-
-  .export-legend {
-    flex-direction: column;
-    align-items: flex-start !important;
-    gap: 15px;
-  }
-
-  .export-legend > div:last-child {
-    text-align: left !important;
-    margin-left: 0 !important;
-  }
 }
 
 .zigzag-path:active {
