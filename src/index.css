@@ -417,39 +417,56 @@ svg {
   cursor: grabbing;
 }
 
-/* Mobile Responsiveness */
+/* Responsive Layout Adjustments */
+@media (max-width: 1024px) {
+  .header-buttons {
+    top: 75px;
+    right: 50%;
+    transform: translateX(50%);
+    width: max-content;
+  }
+}
+
 @media (max-width: 768px) {
-  .app-container {
-    padding: 1rem;
-    gap: 1rem;
+  .header {
+    display: none;
   }
   
-  .header h1 {
-    font-size: 1.8rem;
+  .map-tools-overlay {
+    top: 15px;
   }
 
   .header-buttons {
+    top: 75px;
+    width: 90%;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    padding: 8px;
+    gap: 6px;
   }
   
   .header-buttons button {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.6rem !important;
-  }
-
-  .toolbar {
-    padding: 10px 15px;
-    gap: 10px !important;
+    font-size: 0.8rem;
+    padding: 0.5rem;
+    flex: 1 1 30%;
     justify-content: center;
   }
 
-  .export-container {
-    padding: 15px !important;
+  .palette-overlay {
+    bottom: 15px;
+    width: 92%;
+    padding: 8px 12px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
   }
-  
-  .map-container {
-    padding: 0.5rem;
+
+  .palette-overlay > span {
+    display: none;
+  }
+
+  .reset-view-btn {
+    bottom: 85px;
+    right: 15px;
   }
 
   .export-legend {
