@@ -452,7 +452,7 @@ svg {
   }
 
   .palette-overlay {
-    bottom: 15px;
+    bottom: max(30px, env(safe-area-inset-bottom, 30px));
     width: 92%;
     padding: 8px 12px;
     flex-wrap: nowrap;
@@ -465,7 +465,7 @@ svg {
   }
 
   .reset-view-btn {
-    bottom: 85px;
+    bottom: calc(max(30px, env(safe-area-inset-bottom, 30px)) + 70px);
     right: 15px;
   }
 }

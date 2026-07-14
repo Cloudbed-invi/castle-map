@@ -12,24 +12,23 @@ export function HelpModal({ onClose }) {
         <div className="settings-section" style={{ lineHeight: '1.6', color: '#334155' }}>
           <h3 style={{ marginTop: '0' }}>🎨 1. Painting the Map</h3>
           <ul style={{ margin: '0 0 1.5rem 1.5rem', padding: 0 }}>
-            <li>Use the <strong>Show Tools</strong> button at the top to open the Paint Toolbar.</li>
-            <li>Click any color in <em>"Add to Palette"</em> to add it to your <strong>Active Colors</strong>.</li>
-            <li>Select an Active Color, then <strong>click and drag</strong> over the diamond grid to paint multiple cells quickly!</li>
-            <li>To erase, simply paint over an already colored cell with the same active color.</li>
+            <li>Select any color from the <strong>Palette</strong> at the bottom of the screen.</li>
+            <li>In <strong>🖌️ Draw Mode</strong>, click and drag over the diamond grid to paint multiple cells quickly!</li>
+            <li>To erase, select the active color again, then paint over cells to clear them.</li>
+            <li>Add custom colors by clicking the <strong>+</strong> button on the palette.</li>
           </ul>
 
-          <h3>🏷️ 2. Customizing the Legend</h3>
+          <h3>🗺️ 2. Navigation</h3>
           <ul style={{ margin: '0 0 1.5rem 1.5rem', padding: 0 }}>
-            <li>Open <strong>⚙️ Settings</strong> to assign labels to your colors (e.g., "Team A", "Main Base").</li>
-            <li>Any unassigned colors are automatically hidden from the final exported image.</li>
-            <li>You can completely remove a color from your palette by clicking the red <strong>×</strong> in Settings.</li>
+            <li><strong>PC:</strong> Scroll anywhere to zoom. Right-click and drag to pan instantly (or use 🖐️ Pan Mode). Double right-click (or double left-click) to reset the view.</li>
+            <li><strong>Mobile:</strong> Use two fingers to pinch-to-zoom or pan around the map.</li>
+            <li><strong>Borders:</strong> Click and drag the thick colored border lines (N/S/E/W) to resize the diamond grid.</li>
           </ul>
 
-          <h3>🔤 3. Floating Text Labels</h3>
+          <h3>🏷️ 3. Map Key & Labels</h3>
           <ul style={{ margin: '0 0 1.5rem 1.5rem', padding: 0 }}>
-            <li>In Settings, scroll to the <strong>Floating Texts</strong> section and click <strong>Add New Text Label</strong>.</li>
-            <li>You can drag the label anywhere on the map.</li>
-            <li>To <strong>delete</strong> a label directly from the map, click on it (it will highlight with a blue dashed box) and press the <strong>Delete</strong> or <strong>Backspace</strong> key.</li>
+            <li>Open <strong>⚙️ Settings</strong> to assign labels to your colors (e.g., "Team A", "Main Base"). Unassigned colors are hidden from the final export.</li>
+            <li>In Settings, you can also add <strong>Floating Texts</strong>. Drag them anywhere on the map, or select them and press Delete to remove.</li>
           </ul>
 
           <h3>💾 4. Saving & Sharing</h3>

@@ -348,7 +348,23 @@ function App() {
       </header>
 
       <div className="header-buttons">
-          <button className="primary" onClick={() => setShowHelp(true)}>
+          <div style={{ display: 'flex', gap: '4px', marginRight: '8px', background: 'rgba(255,255,255,0.5)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+            <button 
+              className={interactionMode === 'draw' ? 'primary' : ''} 
+              onClick={() => setInteractionMode('draw')}
+              title="Draw Mode"
+            >
+              🖌️ Draw
+            </button>
+            <button 
+              className={interactionMode === 'pan' ? 'primary' : ''} 
+              onClick={() => setInteractionMode('pan')}
+              title="Pan / Zoom Mode"
+            >
+              🖐️ Pan
+            </button>
+          </div>
+          <button onClick={() => setShowHelp(true)}>
             ❓ Instructions
           </button>
           <button onClick={() => setShowSettings(true)}>
@@ -371,23 +387,6 @@ function App() {
       <main className="main-content">
         
         <div className="live-container">
-          <div className="map-tools-overlay">
-            <button 
-              className={interactionMode === 'draw' ? 'active' : ''} 
-              onClick={() => setInteractionMode('draw')}
-              title="Draw Mode"
-            >
-              🖌️ Draw
-            </button>
-            <button 
-              className={interactionMode === 'pan' ? 'active' : ''} 
-              onClick={() => setInteractionMode('pan')}
-              title="Pan / Zoom Mode"
-            >
-              🖐️ Pan
-            </button>
-          </div>
-
           {mapAndLegend(false)}
 
           <div className="palette-overlay">

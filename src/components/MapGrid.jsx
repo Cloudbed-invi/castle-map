@@ -38,6 +38,8 @@ function getCellNumber(u, v) {
 export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPointerEnter, zigzagColor, lines, setLines, floatingTexts, setFloatingTexts, selectedTextId, setSelectedTextId, mapTitle, mapSubtitle, interactionMode = 'draw', isExport = false }) {
   const SIZE = 24; 
   const svgRef = useRef(null);
+  const transformRef = useRef(null);
+  const lastRightClickTime = useRef(0);
   const [dragState, setDragState] = useState(null); // { id, cIndex, controlsU, nodeType, pointerId }
 
   const cells = [];
@@ -372,17 +374,33 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
     );
   }
 
+  const handleContextMenu = (e) => {
+    e.preventDefault();
+    const now = Date.now();
+    if (now - lastRightClickTime.current < 300) {
+      if (transformRef.current) {
+        transformRef.current.resetTransform();
+      }
+    }
+    lastRightClickTime.current = now;
+  };
+
   return (
-    <div className="map-container" style={{ padding: 0 }}>
+    <div className="map-container" style={{ padding: 0 }} onContextMenu={handleContextMenu}>
       <TransformWrapper
+        ref={transformRef}
         initialScale={1}
         minScale={0.5}
         maxScale={4}
-        disabled={interactionMode === 'draw'}
-        panning={{ disabled: interactionMode === 'draw' }}
+        disabled={false}
+        panning={{ 
+          disabled: false,
+          allowLeftClickPan: interactionMode === 'pan',
+          allowRightClickPan: true 
+        }}
         pinch={{ disabled: false }}
-        doubleClick={{ disabled: true }}
-        wheel={{ disabled: interactionMode === 'draw' }}
+        doubleClick={{ disabled: false, mode: 'reset' }}
+        wheel={{ disabled: false }}
         style={{ width: "100%", height: "100%" }}
       >
         <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
