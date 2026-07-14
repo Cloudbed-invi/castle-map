@@ -296,8 +296,8 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
     <svg 
       ref={svgRef}
       width={isExport ? "800" : "100%"} 
-      height={isExport ? "650" : "100%"} 
-      viewBox="-400 -50 800 650"
+      height={isExport ? "760" : "100%"} 
+      viewBox="-400 -50 800 760"
       onPointerDown={() => { if (setSelectedTextId) setSelectedTextId(null); }}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -366,7 +366,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
 
   if (isExport) {
     return (
-      <div className="map-container" style={{ padding: 0, width: '800px', height: '650px' }}>
+      <div className="map-container" style={{ padding: 0, width: '800px', height: '760px' }}>
         {svgContent}
       </div>
     );

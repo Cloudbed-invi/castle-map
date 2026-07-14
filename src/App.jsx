@@ -345,31 +345,32 @@ function App() {
       <header className="header">
         <h1>SunFire Interactive Map</h1>
         <p>Interactive diamond grid map editor</p>
-        <div className="header-buttons" style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => setShowHelp(true)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', backgroundColor: '#3b82f6', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            ❓ Instructions
-          </button>
-          <button onClick={() => setShowSettings(true)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #cbd5e1', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            ⚙️ Settings
-          </button>
-          <button onClick={handleResetBorders} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #cbd5e1', cursor: 'pointer' }}>
-            Reset Borders
-          </button>
-          <button onClick={handleCopyShareLink} style={{ padding: '0.5rem 1rem', borderRadius: '6px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', cursor: 'pointer' }}>
-            🔗 Share Link
-          </button>
-          <button onClick={handleUploadImgbb} style={{ padding: '0.5rem 1rem', borderRadius: '6px', backgroundColor: '#f59e0b', color: 'white', border: 'none', cursor: 'pointer' }}>
-            ☁️ Upload ImgBB
-          </button>
-          <button onClick={handleExportImage} style={{ padding: '0.5rem 1rem', borderRadius: '6px', backgroundColor: '#10b981', color: 'white', border: 'none', cursor: 'pointer' }}>
-            Export Image
-          </button>
-        </div>
       </header>
 
-      <main className="main-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div className="header-buttons">
+          <button className="primary" onClick={() => setShowHelp(true)}>
+            ❓ Instructions
+          </button>
+          <button onClick={() => setShowSettings(true)}>
+            ⚙️ Settings
+          </button>
+          <button onClick={handleResetBorders}>
+            Reset Borders
+          </button>
+          <button className="purple" onClick={handleCopyShareLink}>
+            🔗 Share Link
+          </button>
+          <button className="warning" onClick={handleUploadImgbb}>
+            ☁️ Upload ImgBB
+          </button>
+          <button className="success" onClick={handleExportImage}>
+            Export Image
+          </button>
+      </div>
+
+      <main className="main-content">
         
-        <div className="live-container" style={{ backgroundColor: 'white', width: '100%', maxWidth: '840px', borderRadius: '8px' }}>
+        <div className="live-container">
           <div className="map-tools-overlay">
             <button 
               className={interactionMode === 'draw' ? 'active' : ''} 

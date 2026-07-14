@@ -22,8 +22,13 @@
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-color);
+  background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+  background-size: 24px 24px;
   color: var(--text-primary);
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  margin: 0;
   display: flex;
   flex-direction: column;
 }
@@ -31,63 +36,146 @@ body {
 #root {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.toolbar {
-  padding: 15px 30px;
-}
-
-.export-container {
-  padding: 40px;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
 }
 
 .header {
-  text-align: center;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 20;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 16px 24px;
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  pointer-events: none;
 }
 
 .header h1 {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
 }
 
 .header p {
   color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.header-buttons {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 20;
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px;
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.header-buttons button {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+  background: white;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.header-buttons button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  background: #f1f5f9;
+}
+
+.header-buttons button.primary {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+}
+
+.header-buttons button.primary:hover {
+  background: #2563eb;
+}
+
+.header-buttons button.success {
+  background: #10b981;
+  color: white;
+  border: none;
+}
+
+.header-buttons button.success:hover {
+  background: #059669;
+}
+
+.header-buttons button.warning {
+  background: #f59e0b;
+  color: white;
+  border: none;
+}
+
+.header-buttons button.warning:hover {
+  background: #d97706;
+}
+
+.header-buttons button.purple {
+  background: #8b5cf6;
+  color: white;
+  border: none;
+}
+
+.header-buttons button.purple:hover {
+  background: #7c3aed;
 }
 
 .main-content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
   width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 .map-container {
   flex: 1;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  padding: 1rem;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 800px;
+  max-width: none;
   width: 100%;
-  aspect-ratio: 800 / 650;
+  height: 100%;
+  aspect-ratio: auto;
   overflow: hidden;
 }
 
@@ -98,71 +186,78 @@ svg {
 }
 
 .live-container {
-  position: relative;
-  background-color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
-  max-width: 840px;
-  border-radius: 12px;
-  box-shadow: var(--shadow-md);
+  height: 100%;
+  max-width: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
   overflow: hidden;
 }
 
 .map-tools-overlay {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.85);
   padding: 6px;
-  border-radius: 8px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-color);
-  backdrop-filter: blur(4px);
-  z-index: 10;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  z-index: 20;
 }
 
 .map-tools-overlay button {
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
   border: 1px solid transparent;
-  background: white;
+  background: transparent;
   color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   transition: all 0.2s;
 }
 
 .map-tools-overlay button:hover {
-  background: #f1f5f9;
+  background: rgba(241, 245, 249, 0.8);
 }
 
 .map-tools-overlay button.active {
   background: #eff6ff;
   color: var(--accent-color);
   border-color: #bfdbfe;
+  box-shadow: var(--shadow-sm);
 }
 
 .reset-view-btn {
   position: absolute;
-  bottom: 15px;
-  right: 15px;
-  width: 36px;
-  height: 36px;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: white;
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   z-index: 10;
   transition: all 0.2s;
 }
@@ -173,18 +268,23 @@ svg {
 }
 
 .palette-overlay {
-  margin-top: -10px;
-  margin-bottom: 20px;
-  background: white;
-  padding: 12px;
-  border-radius: 12px;
-  box-shadow: var(--shadow-md);
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 12px 24px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
   justify-content: center;
-  border: 1px solid var(--border-color);
-  z-index: 10;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  z-index: 20;
 }
 
 .settings-modal-overlay {
