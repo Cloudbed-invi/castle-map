@@ -10,6 +10,7 @@ export function SettingsPanel({
   mapSubtitle, setMapSubtitle,
   exportDate, setExportDate,
   imgbbKey, setImgbbKey,
+  bitlyKey, setBitlyKey,
   onClose
 }) {
   const recommendedColors = ['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#000000'];
@@ -156,16 +157,32 @@ export function SettingsPanel({
           </div>
         </div>
         <div className="settings-section" style={{ marginTop: '1.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
-          <h3>ImgBB API Key</h3>
-          <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '0.5rem' }}>
-            To upload maps directly to ImgBB, enter your free API key from <a href="https://api.imgbb.com" target="_blank" rel="noreferrer" style={{ color: '#3b82f6' }}>api.imgbb.com</a>. This is saved securely in your browser.
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <h3>API Keys (Optional)</h3>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+            <label style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155' }}>ImgBB API Key</label>
+            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 0.25rem 0' }}>
+              To upload maps directly to ImgBB, enter your free API key from <a href="https://api.imgbb.com" target="_blank" rel="noreferrer" style={{ color: '#3b82f6' }}>api.imgbb.com</a>.
+            </p>
             <input 
               type="text" 
               placeholder="Your ImgBB API Key"
               value={imgbbKey} 
               onChange={(e) => setImgbbKey(e.target.value)}
+              style={{ padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155' }}>Bitly API Key (URL Shortener)</label>
+            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 0.25rem 0' }}>
+              To shorten Share Links, enter a Bitly API Key (Bearer Token).
+            </p>
+            <input 
+              type="text" 
+              placeholder="Your Bitly Access Token"
+              value={bitlyKey} 
+              onChange={(e) => setBitlyKey(e.target.value)}
               style={{ padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
             />
           </div>

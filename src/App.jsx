@@ -12,6 +12,8 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [imgbbKey, setImgbbKey] = useState(() => localStorage.getItem('imgbbKey') || '');
+  const [bitlyKey, setBitlyKey] = useState(() => localStorage.getItem('bitlyKey') || '');
+  const [selectedTextId, setSelectedTextId] = useState(null);
 
   const [cellColors, setCellColors] = useState({});
   const [paletteColors, setPaletteColors] = useState(initialColors);
@@ -113,6 +115,20 @@ function App() {
     return () => window.removeEventListener('pointerup', handleMouseUp);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+        if (selectedTextId) {
+          setFloatingTexts(prev => prev.filter(t => t.id !== selectedTextId));
+          setSelectedTextId(null);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedTextId]);
+
   const applyPaint = (cellNumber, mode) => {
     setCellColors(prev => {
       if (mode === 'erase' && prev[cellNumber] === activeColor) {
@@ -160,14 +176,40 @@ function App() {
     });
   };
 
-  const handleCopyShareLink = () => {
+  const handleCopyShareLink = async () => {
     const state = {
       cellColors, paletteColors, activeColor, legendMap, 
       zigzagColor, floatingTexts, mapTitle, mapSubtitle, exportDate, lines
     };
     const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(state));
-    const url = window.location.origin + window.location.pathname + '#' + compressed;
-    navigator.clipboard.writeText(url).then(() => {
+    const longUrl = window.location.origin + window.location.pathname + '#' + compressed;
+    
+    let urlToCopy = longUrl;
+    
+    if (bitlyKey) {
+      try {
+        const res = await fetch('https://api-ssl.bitly.com/v4/shorten', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${bitlyKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ long_url: longUrl, domain: "bit.ly" })
+        });
+        const data = await res.json();
+        if (data.link) {
+          urlToCopy = data.link;
+        } else {
+          console.error("Bitly error:", data);
+          alert("Bitly shortening failed. Using long URL.");
+        }
+      } catch (err) {
+        console.error("Bitly fetch error:", err);
+        alert("Bitly shortening failed. Using long URL.");
+      }
+    }
+
+    navigator.clipboard.writeText(urlToCopy).then(() => {
       alert("Shareable link copied to clipboard! You can share this with anyone.");
     }).catch(err => {
       console.error("Failed to copy link:", err);
@@ -273,6 +315,8 @@ function App() {
             setLines={setLines}
             floatingTexts={floatingTexts}
             setFloatingTexts={setFloatingTexts}
+            selectedTextId={selectedTextId}
+            setSelectedTextId={setSelectedTextId}
             mapTitle={mapTitle}
             mapSubtitle={mapSubtitle}
           />
@@ -323,6 +367,8 @@ function App() {
             setExportDate={setExportDate}
             imgbbKey={imgbbKey}
             setImgbbKey={(k) => { setImgbbKey(k); localStorage.setItem('imgbbKey', k); }}
+            bitlyKey={bitlyKey}
+            setBitlyKey={(k) => { setBitlyKey(k); localStorage.setItem('bitlyKey', k); }}
             onClose={() => setShowSettings(false)}
           />
         )}

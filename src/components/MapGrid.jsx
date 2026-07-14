@@ -21,7 +21,7 @@ function getCellNumber(u, v) {
   return null;
 }
 
-export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPointerEnter, zigzagColor, lines, setLines, floatingTexts, setFloatingTexts, mapTitle, mapSubtitle }) {
+export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPointerEnter, zigzagColor, lines, setLines, floatingTexts, setFloatingTexts, selectedTextId, setSelectedTextId, mapTitle, mapSubtitle }) {
   const SIZE = 24; 
   const svgRef = useRef(null);
   const [dragState, setDragState] = useState(null); // { id, cIndex, controlsU, nodeType, pointerId }
@@ -84,6 +84,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
       svgRef.current.setPointerCapture(e.pointerId);
     }
     setDragState({ id, nodeType: 'floatingText', pointerId: e.pointerId });
+    if (setSelectedTextId) setSelectedTextId(id);
     e.stopPropagation();
   };
 
@@ -261,6 +262,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
       <svg 
         ref={svgRef}
         width="800" height="800" viewBox="-400 -50 800 800"
+        onPointerDown={() => { if (setSelectedTextId) setSelectedTextId(null); }}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
@@ -279,26 +281,40 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
             </>
           )}
 
-          {floatingTexts?.map(t => (
-            <text 
-              key={t.id} 
-              x={t.x} 
-              y={t.y} 
-              textAnchor="middle" 
-              fontSize={t.size || 48} 
-              transform={`rotate(${t.rotate || 0}, ${t.x}, ${t.y})`}
-              fontWeight="bold" 
-              fill="#0f172a"
-              stroke="#ffffff"
-              strokeWidth="6"
-              paintOrder="stroke fill"
-              className="map-title"
-              style={{ cursor: 'move', userSelect: 'none', pointerEvents: 'auto' }}
-              onPointerDown={(e) => handleTextPointerDown(e, t.id)}
-            >
-              {t.text}
-            </text>
-          ))}
+          {floatingTexts?.map(t => {
+            const isSelected = selectedTextId === t.id;
+            return (
+              <g key={t.id} transform={`translate(${t.x}, ${t.y}) rotate(${t.rotate || 0})`}>
+                <text 
+                  textAnchor="middle" 
+                  fontSize={t.size || 48} 
+                  fontWeight="bold" 
+                  fill="#0f172a"
+                  stroke={isSelected ? "#3b82f6" : "#ffffff"}
+                  strokeWidth="6"
+                  paintOrder="stroke fill"
+                  className="map-title"
+                  style={{ cursor: 'move', userSelect: 'none', pointerEvents: 'auto' }}
+                  onPointerDown={(e) => handleTextPointerDown(e, t.id)}
+                >
+                  {t.text}
+                </text>
+                {isSelected && (
+                  <rect 
+                    x={-(t.size || 48) * (t.text.length * 0.3)} 
+                    y={-(t.size || 48) * 0.8} 
+                    width={(t.size || 48) * (t.text.length * 0.6)} 
+                    height={(t.size || 48) * 1.1} 
+                    fill="none" 
+                    stroke="#3b82f6" 
+                    strokeWidth="2" 
+                    strokeDasharray="4 4"
+                    style={{ pointerEvents: 'none' }}
+                  />
+                )}
+              </g>
+            );
+          })}
 
           <path d={makePath(nData.points)} stroke={zigzagColor} strokeWidth="6" className="zigzag-path" style={{ pointerEvents: 'none', fill: 'none' }} />
           <path d={makePath(sData.points)} stroke={zigzagColor} strokeWidth="6" className="zigzag-path" style={{ pointerEvents: 'none', fill: 'none' }} />
