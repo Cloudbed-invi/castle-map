@@ -400,7 +400,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
         }}
         pinch={{ disabled: false }}
         doubleClick={{ disabled: false, mode: 'reset' }}
-        wheel={{ disabled: false }}
+        wheel={{ disabled: false, step: 0.05 }}
         style={{ width: "100%", height: "100%" }}
       >
         <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
