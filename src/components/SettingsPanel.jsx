@@ -44,45 +44,6 @@ export function SettingsPanel({
         </div>
 
         <div className="settings-section">
-          <h3>Palette</h3>
-          <div className="recommended-colors">
-            <div className="color-options" style={{ marginBottom: '1rem' }}>
-              {recommendedColors.map(rc => (
-                <div 
-                  key={rc}
-                  className="color-swatch"
-                  style={{ backgroundColor: rc }}
-                  onClick={() => onAddColor(rc)}
-                  title="Add to palette"
-                />
-              ))}
-              <div className="color-picker-wrapper" style={{ width: '28px', height: '28px' }}>
-                 <input 
-                   type="color" 
-                   className="color-picker-input"
-                   onChange={(e) => onAddColor(e.target.value)}
-                   title="Add custom color"
-                 />
-                 <div className="color-picker-btn" style={{ fontSize: '1.2rem' }}>+</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="color-options" style={{ marginTop: '0.5rem' }}>
-            {colors.length === 0 && <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>No colors added</span>}
-            {colors.map((color, index) => (
-              <div
-                key={`${color}-${index}`}
-                className={`color-swatch ${activeColor === color ? 'active' : ''}`}
-                style={{ backgroundColor: color }}
-                onClick={() => setActiveColor(color)}
-                title={legendMap[color] || 'Unlabeled'}
-              />
-            ))}
-          </div>
-        </div>
-        
-        <div className="settings-section" style={{ marginTop: '1.5rem' }}>
           <h3>Border Line</h3>
           <div className="color-options">
             <div className="color-picker-wrapper" style={{ borderColor: zigzagColor, width: '28px', height: '28px' }}>
