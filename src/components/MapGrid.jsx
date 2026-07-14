@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 function getCellNumber(u, v) {
   let r = Math.min(u, 13 - u, v, 13 - v);
@@ -21,7 +22,7 @@ function getCellNumber(u, v) {
   return null;
 }
 
-export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPointerEnter, zigzagColor, lines, setLines, floatingTexts, setFloatingTexts, selectedTextId, setSelectedTextId, mapTitle, mapSubtitle }) {
+export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPointerEnter, zigzagColor, lines, setLines, floatingTexts, setFloatingTexts, selectedTextId, setSelectedTextId, mapTitle, mapSubtitle, interactionMode = 'draw' }) {
   const SIZE = 24; 
   const svgRef = useRef(null);
   const [dragState, setDragState] = useState(null); // { id, cIndex, controlsU, nodeType, pointerId }
@@ -73,6 +74,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
   const makePath = (points) => points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${getPos(p.u, p.v).x} ${getPos(p.u, p.v).y}`).join(' ');
 
   const handleNodePointerDown = (e, id, nodeType) => {
+    if (interactionMode !== 'draw') return;
     if (svgRef.current) {
       svgRef.current.setPointerCapture(e.pointerId);
     }
@@ -80,6 +82,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
   };
 
   const handleTextPointerDown = (e, id) => {
+    if (interactionMode !== 'draw') return;
     if (svgRef.current) {
       svgRef.current.setPointerCapture(e.pointerId);
     }
@@ -89,6 +92,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
   };
 
   const handlePointerDown = (e, id, cIndex, controlsU) => {
+    if (interactionMode !== 'draw') return;
     if (svgRef.current) {
       svgRef.current.setPointerCapture(e.pointerId);
     }
@@ -258,15 +262,27 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
   const wData = buildLineObj('w', lines.w);
 
   return (
-    <div className="map-container">
-      <svg 
-        ref={svgRef}
-        width="100%" height="100%" viewBox="-400 -50 800 800"
-        onPointerDown={() => { if (setSelectedTextId) setSelectedTextId(null); }}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
+    <div className="map-container" style={{ padding: 0 }}>
+      <TransformWrapper
+        initialScale={1}
+        minScale={0.5}
+        maxScale={4}
+        disabled={interactionMode === 'draw'}
+        panning={{ disabled: interactionMode === 'draw' }}
+        pinch={{ disabled: false }}
+        doubleClick={{ disabled: true }}
+        wheel={{ disabled: interactionMode === 'draw' }}
+        style={{ width: "100%", height: "100%" }}
       >
+        <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
+          <svg 
+            ref={svgRef}
+            width="100%" height="100%" viewBox="-400 -50 800 800"
+            onPointerDown={() => { if (setSelectedTextId) setSelectedTextId(null); }}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+          >
         <g>
           {cells}
           {labelCells}
@@ -326,7 +342,9 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
           {eData.handles}
           {wData.handles}
         </g>
-      </svg>
+          </svg>
+        </TransformComponent>
+      </TransformWrapper>
     </div>
   );
 }

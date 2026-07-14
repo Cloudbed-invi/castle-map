@@ -94,7 +94,7 @@ body {
 svg {
   width: 100%;
   height: 100%;
-  touch-action: none; /* Prevent scroll on touch while dragging */
+  touch-action: none;
 }
 
 .settings-modal-overlay {

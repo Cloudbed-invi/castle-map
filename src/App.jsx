@@ -13,6 +13,7 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showToolbar, setShowToolbar] = useState(true);
+  const [interactionMode, setInteractionMode] = useState('draw'); // 'draw' or 'pan'
   const [isLoaded, setIsLoaded] = useState(false);
   const [imgbbKey, setImgbbKey] = useState(() => localStorage.getItem('imgbbKey') || '');
   const [bitlyKey, setBitlyKey] = useState(() => localStorage.getItem('bitlyKey') || '');
@@ -146,6 +147,7 @@ function App() {
   };
 
   const handleCellPointerDown = (e, cellNumber) => {
+    if (interactionMode !== 'draw') return;
     if (e.button !== 0 || !activeColor) return;
     const mode = cellColors[cellNumber] === activeColor ? 'erase' : 'paint';
     setPaintState(mode);
@@ -153,6 +155,7 @@ function App() {
   };
 
   const handleCellPointerEnter = (e, cellNumber) => {
+    if (interactionMode !== 'draw') return;
     if (e.buttons !== 1 || !paintState || !activeColor) return;
     applyPaint(cellNumber, paintState);
   };
@@ -315,7 +318,22 @@ function App() {
         
         {showToolbar && (
           <div className="toolbar" style={{ backgroundColor: 'white', borderRadius: '8px', marginBottom: '20px', width: '100%', maxWidth: '840px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginRight: '10px' }}>
+              <button 
+                onClick={() => setInteractionMode('draw')}
+                style={{ padding: '0.4rem 0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: interactionMode === 'draw' ? '#e2e8f0' : 'white', cursor: 'pointer', fontWeight: interactionMode === 'draw' ? 'bold' : 'normal' }}
+              >
+                🖌️ Draw
+              </button>
+              <button 
+                onClick={() => setInteractionMode('pan')}
+                style={{ padding: '0.4rem 0.8rem', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: interactionMode === 'pan' ? '#e2e8f0' : 'white', cursor: 'pointer', fontWeight: interactionMode === 'pan' ? 'bold' : 'normal' }}
+              >
+                🖐️ Pan / Zoom
+              </button>
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', opacity: interactionMode === 'draw' ? 1 : 0.5, pointerEvents: interactionMode === 'draw' ? 'auto' : 'none' }}>
               <span style={{ fontWeight: 'bold', color: '#334155' }}>Add to Palette:</span>
               <div className="color-options">
                 {['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#000000'].map(rc => (
@@ -375,6 +393,7 @@ function App() {
             setSelectedTextId={setSelectedTextId}
             mapTitle={mapTitle}
             mapSubtitle={mapSubtitle}
+            interactionMode={interactionMode}
           />
           
           {/* Static Map Key for Export */}
