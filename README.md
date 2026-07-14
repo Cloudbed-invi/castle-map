@@ -1,16 +1,35 @@
-# React + Vite
+# Castle Map Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+An interactive, responsive diamond-grid map editor built with React and Vite. It allows you to create fully customizable maps, add floating text, save your progress to a shareable URL, upload directly to ImgBB, and export high-quality images.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Interactive Diamond Grid**: Paint and erase cells with a custom color palette.
+- **Customizable Borders**: Dynamic grid lines that adapt to dark colors (e.g., black cells get red borders).
+- **Floating Labels**: Add Canva-style draggable, rotatable, and resizable text anywhere on the map.
+- **Title & Legend**: Beautifully integrated Map Title and Subtitle, plus an auto-generated Export Legend.
+- **State Persistence**: Your work is automatically saved to your browser's local storage.
+- **URL Sharing**: Generate a highly compressed, shareable URL so you can send your map to anyone.
+- **1-Click ImgBB Upload**: Enter your ImgBB API key to seamlessly upload your map picture and get a direct link.
+- **Local Image Export**: Export your map and legend as a high-quality PNG.
 
-## React Compiler
+## Development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# Install dependencies
+npm install
 
-## Expanding the Oxlint configuration
+# Start the dev server
+npm run dev
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+# Build for production
+npm run build
+```
+
+## Deployment
+
+This project is configured to automatically deploy to GitHub Pages via GitHub Actions when pushing to the `main` or `master` branch.
+
+## License
+
+MIT
