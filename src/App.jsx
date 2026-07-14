@@ -284,6 +284,52 @@ function App() {
       });
   };
 
+  const mapAndLegend = (isExportMode) => (
+    <>
+      <MapGrid 
+        cellColors={cellColors}
+        activeColor={activeColor}
+        onCellPointerDown={handleCellPointerDown}
+        onCellPointerEnter={handleCellPointerEnter}
+        zigzagColor={zigzagColor}
+        lines={lines}
+        setLines={setLines}
+        floatingTexts={floatingTexts}
+        setFloatingTexts={setFloatingTexts}
+        selectedTextId={selectedTextId}
+        setSelectedTextId={setSelectedTextId}
+        mapTitle={mapTitle}
+        mapSubtitle={mapSubtitle}
+        interactionMode={interactionMode}
+        isExport={isExportMode}
+      />
+      
+      {(paletteColors.some(c => legendMap[c]?.trim()) || exportDate) && (
+        <div className="export-legend" style={{ marginTop: '20px', padding: '15px', border: '2px solid #e2e8f0', borderRadius: '8px', backgroundColor: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ flex: 1 }}>
+            {paletteColors.some(c => legendMap[c]?.trim()) && <h3 style={{ margin: '0 0 10px 0', fontSize: '1.1rem', color: '#0f172a' }}>Map Key</h3>}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '10px' }}>
+              {paletteColors.filter(c => legendMap[c]?.trim()).map((color, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '24px', height: '24px', backgroundColor: color, border: '1px solid #ccc', borderRadius: '4px' }} />
+                  <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#334155' }}>
+                    {legendMap[color]}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {exportDate && (
+            <div style={{ color: '#64748b', fontSize: '1.1rem', fontWeight: '500', textAlign: 'right', marginLeft: '20px' }}>
+              {formatDate(exportDate)}
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  );
+
   return (
     <div className="app-container">
       <header className="header">
@@ -377,49 +423,8 @@ function App() {
           </div>
         )}
 
-        <div className="export-container" ref={exportRef} style={{ backgroundColor: 'white', width: '100%', maxWidth: '840px', borderRadius: '8px' }}>
-          
-          <MapGrid 
-            cellColors={cellColors}
-            activeColor={activeColor}
-            onCellPointerDown={handleCellPointerDown}
-            onCellPointerEnter={handleCellPointerEnter}
-            zigzagColor={zigzagColor}
-            lines={lines}
-            setLines={setLines}
-            floatingTexts={floatingTexts}
-            setFloatingTexts={setFloatingTexts}
-            selectedTextId={selectedTextId}
-            setSelectedTextId={setSelectedTextId}
-            mapTitle={mapTitle}
-            mapSubtitle={mapSubtitle}
-            interactionMode={interactionMode}
-          />
-          
-          {/* Static Map Key for Export */}
-          {(paletteColors.some(c => legendMap[c]?.trim()) || exportDate) && (
-            <div className="export-legend" style={{ marginTop: '20px', padding: '15px', border: '2px solid #e2e8f0', borderRadius: '8px', backgroundColor: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ flex: 1 }}>
-                {paletteColors.some(c => legendMap[c]?.trim()) && <h3 style={{ margin: '0 0 10px 0', fontSize: '1.1rem', color: '#0f172a' }}>Map Key</h3>}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '10px' }}>
-                  {paletteColors.filter(c => legendMap[c]?.trim()).map((color, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '24px', height: '24px', backgroundColor: color, border: '1px solid #ccc', borderRadius: '4px' }} />
-                      <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#334155' }}>
-                        {legendMap[color]}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {exportDate && (
-                <div style={{ color: '#64748b', fontSize: '1.1rem', fontWeight: '500', textAlign: 'right', marginLeft: '20px' }}>
-                  {formatDate(exportDate)}
-                </div>
-              )}
-            </div>
-          )}
+        <div className="live-container" style={{ backgroundColor: 'white', width: '100%', maxWidth: '840px', borderRadius: '8px' }}>
+          {mapAndLegend(false)}
         </div>
 
         {showSettings && (
@@ -448,6 +453,23 @@ function App() {
             onClose={() => setShowSettings(false)}
           />
         )}
+        
+        {/* Off-screen Export Container */}
+        <div 
+          className="export-container" 
+          ref={exportRef} 
+          style={{ 
+            position: 'absolute', 
+            left: '-9999px', 
+            top: 0, 
+            width: '840px', 
+            backgroundColor: 'white', 
+            padding: '20px',
+            pointerEvents: 'none'
+          }}
+        >
+          {mapAndLegend(true)}
+        </div>
 
         {showHelp && (
           <HelpModal onClose={() => setShowHelp(false)} />
