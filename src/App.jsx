@@ -241,7 +241,7 @@ function App() {
     }
     if (!exportRef.current) return;
     
-    toPng(exportRef.current, { backgroundColor: '#ffffff', filter: filterExport })
+    toPng(exportRef.current, { backgroundColor: '#ffffff', filter: filterExport, pixelRatio: 3 })
       .then((dataUrl) => {
         const base64Data = dataUrl.split(',')[1];
         const formData = new FormData();
@@ -271,7 +271,7 @@ function App() {
   const handleExportImage = () => {
     if (!exportRef.current) return;
 
-    toPng(exportRef.current, { backgroundColor: '#ffffff', filter: filterExport })
+    toPng(exportRef.current, { backgroundColor: '#ffffff', filter: filterExport, pixelRatio: 3 })
       .then((dataUrl) => {
         const link = document.createElement('a');
         link.download = 'sunfire-map.png';
