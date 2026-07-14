@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MapGrid } from './components/MapGrid';
 import { SettingsPanel } from './components/SettingsPanel';
+import { HelpModal } from './components/HelpModal';
 import { toPng } from 'html-to-image';
 import LZString from 'lz-string';
 
@@ -10,6 +11,7 @@ const initialColors = [];
 function App() {
   const exportRef = useRef(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [showToolbar, setShowToolbar] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const [imgbbKey, setImgbbKey] = useState(() => localStorage.getItem('imgbbKey') || '');
@@ -285,6 +287,9 @@ function App() {
         <h1>SunFire Interactive Map</h1>
         <p>Interactive diamond grid map editor</p>
         <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+          <button onClick={() => setShowHelp(true)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', backgroundColor: '#3b82f6', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            ❓ Instructions
+          </button>
           <button onClick={() => setShowSettings(true)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #cbd5e1', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             ⚙️ Settings
           </button>
@@ -423,6 +428,10 @@ function App() {
             setBitlyKey={(k) => { setBitlyKey(k); localStorage.setItem('bitlyKey', k); }}
             onClose={() => setShowSettings(false)}
           />
+        )}
+
+        {showHelp && (
+          <HelpModal onClose={() => setShowHelp(false)} />
         )}
       </main>
     </div>
