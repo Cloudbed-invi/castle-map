@@ -1,0 +1,334 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { MapGrid } from './components/MapGrid';
+import { SettingsPanel } from './components/SettingsPanel';
+import { toPng } from 'html-to-image';
+import LZString from 'lz-string';
+
+// Empty array so legends can be created dynamically
+const initialColors = [];
+
+function App() {
+  const exportRef = useRef(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [imgbbKey, setImgbbKey] = useState(() => localStorage.getItem('imgbbKey') || '');
+
+  const [cellColors, setCellColors] = useState({});
+  const [paletteColors, setPaletteColors] = useState(initialColors);
+  const [activeColor, setActiveColor] = useState('#ef4444'); // Default red
+  const [legendMap, setLegendMap] = useState({});
+  const [paintState, setPaintState] = useState(null); // 'paint' or 'erase'
+  
+  const [zigzagColor, setZigzagColor] = useState('#000000'); // Default black for zigzag
+  const [floatingTexts, setFloatingTexts] = useState([]);
+  const [mapTitle, setMapTitle] = useState('SunFire Castle');
+  const [mapSubtitle, setMapSubtitle] = useState('Team A vs Team B');
+  const [exportDate, setExportDate] = useState(new Date().toISOString().split('T')[0]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return dateString;
+    const date = new Date(parts[0], parts[1] - 1, parts[2]);
+    return date.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+  };
+  
+  // 2D Geometric Path state for the borders (explicit nodes)
+  const initialLines = {
+    n: [
+      { "u": 3.5, "v": 3.5 }, { "u": 2.5, "v": 3.5 }, { "u": 2.5, "v": 2.5 },
+      { "u": 1.5, "v": 2.5 }, { "u": 1.5, "v": 1.5 }, { "u": 0.5, "v": 1.5 },
+      { "u": 0.5, "v": 0.5 }, { "u": -0.5, "v": 0.5 }
+    ],
+    s: [
+      { "u": 9.5, "v": 9.5 }, { "u": 10.5, "v": 9.5 }, { "u": 10.5, "v": 10.5 },
+      { "u": 11.5, "v": 10.5 }, { "u": 11.5, "v": 11.5 }, { "u": 12.5, "v": 11.5 },
+      { "u": 12.5, "v": 12.5 }, { "u": 13.5, "v": 12.5 }
+    ],
+    e: [
+      { "u": 9.5, "v": 3.5 }, { "u": 9.5, "v": 2.5 }, { "u": 10.5, "v": 2.5 },
+      { "u": 10.5, "v": 1.5 }, { "u": 11.5, "v": 1.5 }, { "u": 11.5, "v": 0.5 },
+      { "u": 12.5, "v": 0.5 }, { "u": 12.5, "v": -0.5 }
+    ],
+    w: [
+      { "u": 3.5, "v": 9.5 }, { "u": 3.5, "v": 10.5 }, { "u": 2.5, "v": 10.5 },
+      { "u": 2.5, "v": 11.5 }, { "u": 1.5, "v": 11.5 }, { "u": 1.5, "v": 12.5 },
+      { "u": 0.5, "v": 12.5 }, { "u": 0.5, "v": 13.5 }
+    ]
+  };
+  const [lines, setLines] = useState(initialLines);
+
+  // Load state from URL hash or localStorage
+  useEffect(() => {
+    const loadState = () => {
+      let savedState = null;
+      if (window.location.hash) {
+        try {
+          const hash = window.location.hash.substring(1);
+          const decompressed = LZString.decompressFromEncodedURIComponent(hash);
+          savedState = JSON.parse(decompressed);
+        } catch (e) {
+          console.error("Failed to load from URL hash", e);
+        }
+      }
+      if (!savedState) {
+        try {
+          const localStr = localStorage.getItem('sunfireMapState');
+          if (localStr) savedState = JSON.parse(localStr);
+        } catch (e) {
+          console.error("Failed to load from local storage", e);
+        }
+      }
+
+      if (savedState) {
+        if (savedState.cellColors) setCellColors(savedState.cellColors);
+        if (savedState.paletteColors) setPaletteColors(savedState.paletteColors);
+        if (savedState.activeColor) setActiveColor(savedState.activeColor);
+        if (savedState.legendMap) setLegendMap(savedState.legendMap);
+        if (savedState.zigzagColor) setZigzagColor(savedState.zigzagColor);
+        if (savedState.floatingTexts) setFloatingTexts(savedState.floatingTexts);
+        if (savedState.mapTitle !== undefined) setMapTitle(savedState.mapTitle);
+        if (savedState.mapSubtitle !== undefined) setMapSubtitle(savedState.mapSubtitle);
+        if (savedState.exportDate !== undefined) setExportDate(savedState.exportDate);
+        if (savedState.lines) setLines(savedState.lines);
+      }
+      setIsLoaded(true);
+    };
+    loadState();
+  }, []);
+
+  // Save state to localStorage automatically
+  useEffect(() => {
+    if (!isLoaded) return;
+    const state = {
+      cellColors, paletteColors, activeColor, legendMap, 
+      zigzagColor, floatingTexts, mapTitle, mapSubtitle, exportDate, lines
+    };
+    localStorage.setItem('sunfireMapState', JSON.stringify(state));
+  }, [isLoaded, cellColors, paletteColors, activeColor, legendMap, zigzagColor, floatingTexts, mapTitle, mapSubtitle, exportDate, lines]);
+
+  useEffect(() => {
+    const handleMouseUp = () => setPaintState(null);
+    window.addEventListener('pointerup', handleMouseUp);
+    return () => window.removeEventListener('pointerup', handleMouseUp);
+  }, []);
+
+  const applyPaint = (cellNumber, mode) => {
+    setCellColors(prev => {
+      if (mode === 'erase' && prev[cellNumber] === activeColor) {
+        const next = { ...prev };
+        delete next[cellNumber];
+        return next;
+      } else if (mode === 'paint' && prev[cellNumber] !== activeColor) {
+        return { ...prev, [cellNumber]: activeColor };
+      }
+      return prev;
+    });
+  };
+
+  const handleCellPointerDown = (e, cellNumber) => {
+    if (e.button !== 0 || !activeColor) return;
+    const mode = cellColors[cellNumber] === activeColor ? 'erase' : 'paint';
+    setPaintState(mode);
+    applyPaint(cellNumber, mode);
+  };
+
+  const handleCellPointerEnter = (e, cellNumber) => {
+    if (e.buttons !== 1 || !paintState || !activeColor) return;
+    applyPaint(cellNumber, paintState);
+  };
+
+  const handleAddColor = (newColor) => {
+    if (!paletteColors.includes(newColor)) {
+      setPaletteColors([...paletteColors, newColor]);
+    }
+    setActiveColor(newColor);
+  };
+
+  const handleResetBorders = () => {
+    setLines(initialLines);
+  };
+
+  const handleExportLayout = () => {
+    const layoutStr = JSON.stringify(lines, null, 2);
+    navigator.clipboard.writeText(layoutStr).then(() => {
+      alert("Layout configuration copied to clipboard! Please paste it in our chat.");
+    }).catch(err => {
+      console.error("Failed to copy:", err);
+      alert("Failed to copy. Please check the browser console to see the config.");
+      console.log(layoutStr);
+    });
+  };
+
+  const handleCopyShareLink = () => {
+    const state = {
+      cellColors, paletteColors, activeColor, legendMap, 
+      zigzagColor, floatingTexts, mapTitle, mapSubtitle, exportDate, lines
+    };
+    const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(state));
+    const url = window.location.origin + window.location.pathname + '#' + compressed;
+    navigator.clipboard.writeText(url).then(() => {
+      alert("Shareable link copied to clipboard! You can share this with anyone.");
+    }).catch(err => {
+      console.error("Failed to copy link:", err);
+      alert("Failed to copy link.");
+    });
+  };
+
+  const filterExport = (node) => {
+    if (node.getAttribute && typeof node.getAttribute === 'function') {
+      const cls = node.getAttribute('class') || '';
+      if (cls.includes('drag-handle') || cls.includes('drag-node')) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleUploadImgbb = () => {
+    if (!imgbbKey) {
+      alert("Please enter your ImgBB API key in the settings first.");
+      setShowSettings(true);
+      return;
+    }
+    if (!exportRef.current) return;
+    
+    toPng(exportRef.current, { backgroundColor: '#ffffff', filter: filterExport })
+      .then((dataUrl) => {
+        const base64Data = dataUrl.split(',')[1];
+        const formData = new FormData();
+        formData.append('image', base64Data);
+        
+        return fetch(`https://api.imgbb.com/1/upload?key=${imgbbKey}`, {
+          method: 'POST',
+          body: formData
+        });
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          navigator.clipboard.writeText(data.data.url).then(() => {
+            alert(`Map uploaded successfully! Link copied to clipboard:\n${data.data.url}`);
+          });
+        } else {
+          alert(`Upload failed: ${data.error?.message || 'Unknown error'}`);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to upload image', err);
+        alert('Could not upload image. See console for details.');
+      });
+  };
+
+  const handleExportImage = () => {
+    if (!exportRef.current) return;
+
+    toPng(exportRef.current, { backgroundColor: '#ffffff', filter: filterExport })
+      .then((dataUrl) => {
+        const link = document.createElement('a');
+        link.download = 'sunfire-map.png';
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch((err) => {
+        console.error('Failed to export image', err);
+        alert('Could not export image. See console for details.');
+      });
+  };
+
+  return (
+    <div className="app-container">
+      <header className="header">
+        <h1>SunFire Interactive Map</h1>
+        <p>Interactive diamond grid map editor</p>
+        <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+          <button onClick={() => setShowSettings(true)} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #cbd5e1', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            ⚙️ Settings
+          </button>
+          <button onClick={handleResetBorders} style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid #cbd5e1', cursor: 'pointer' }}>
+            Reset Borders
+          </button>
+          <button onClick={handleCopyShareLink} style={{ padding: '0.5rem 1rem', borderRadius: '6px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', cursor: 'pointer' }}>
+            🔗 Share Link
+          </button>
+          <button onClick={handleUploadImgbb} style={{ padding: '0.5rem 1rem', borderRadius: '6px', backgroundColor: '#f59e0b', color: 'white', border: 'none', cursor: 'pointer' }}>
+            ☁️ Upload ImgBB
+          </button>
+          <button onClick={handleExportImage} style={{ padding: '0.5rem 1rem', borderRadius: '6px', backgroundColor: '#10b981', color: 'white', border: 'none', cursor: 'pointer' }}>
+            Export Image
+          </button>
+        </div>
+      </header>
+
+      <main className="main-content" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="export-container" ref={exportRef} style={{ backgroundColor: 'white', padding: '40px', width: '100%', maxWidth: '840px', borderRadius: '8px' }}>
+          
+          <MapGrid 
+            cellColors={cellColors}
+            activeColor={activeColor}
+            onCellPointerDown={handleCellPointerDown}
+            onCellPointerEnter={handleCellPointerEnter}
+            zigzagColor={zigzagColor}
+            lines={lines}
+            setLines={setLines}
+            floatingTexts={floatingTexts}
+            setFloatingTexts={setFloatingTexts}
+            mapTitle={mapTitle}
+            mapSubtitle={mapSubtitle}
+          />
+          
+          {/* Static Map Key for Export */}
+          {(paletteColors.length > 0 || exportDate) && (
+            <div className="export-legend" style={{ marginTop: '20px', padding: '15px', border: '2px solid #e2e8f0', borderRadius: '8px', backgroundColor: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ flex: 1 }}>
+                {paletteColors.length > 0 && <h3 style={{ margin: '0 0 10px 0', fontSize: '1.1rem', color: '#0f172a' }}>Map Key</h3>}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '10px' }}>
+                  {paletteColors.map((color, idx) => (
+                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ width: '24px', height: '24px', backgroundColor: color, border: '1px solid #ccc', borderRadius: '4px' }} />
+                      <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#334155' }}>
+                        {legendMap[color] || 'Unlabeled'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {exportDate && (
+                <div style={{ color: '#64748b', fontSize: '1.1rem', fontWeight: '500', textAlign: 'right', marginLeft: '20px' }}>
+                  {formatDate(exportDate)}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {showSettings && (
+          <SettingsPanel 
+            colors={paletteColors}
+            activeColor={activeColor}
+            setActiveColor={setActiveColor}
+            legendMap={legendMap}
+            setLegendMap={setLegendMap}
+            onAddColor={handleAddColor}
+            zigzagColor={zigzagColor}
+            setZigzagColor={setZigzagColor}
+            floatingTexts={floatingTexts}
+            setFloatingTexts={setFloatingTexts}
+            mapTitle={mapTitle}
+            setMapTitle={setMapTitle}
+            mapSubtitle={mapSubtitle}
+            setMapSubtitle={setMapSubtitle}
+            exportDate={exportDate}
+            setExportDate={setExportDate}
+            imgbbKey={imgbbKey}
+            setImgbbKey={(k) => { setImgbbKey(k); localStorage.setItem('imgbbKey', k); }}
+            onClose={() => setShowSettings(false)}
+          />
+        )}
+      </main>
+    </div>
+  );
+}
+
+export default App;
