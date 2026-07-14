@@ -1,7 +1,7 @@
 import React from 'react';
 
 export function SettingsPanel({ 
-  colors, activeColor, setActiveColor, 
+  colors, setColors, activeColor, setActiveColor, 
   legendMap, setLegendMap, 
   onAddColor, 
   zigzagColor, setZigzagColor,
@@ -204,6 +204,16 @@ export function SettingsPanel({
                     onChange={(e) => setLegendMap(prev => ({ ...prev, [color]: e.target.value }))}
                     style={{ flex: 1, padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px' }}
                   />
+                  <button 
+                    onClick={() => {
+                      setColors(prev => prev.filter(c => c !== color));
+                      setLegendMap(prev => { const next = {...prev}; delete next[color]; return next; });
+                    }}
+                    style={{ padding: '0.25rem', background: 'transparent', color: '#ef4444', border: 'none', cursor: 'pointer', fontSize: '1rem' }}
+                    title="Remove from Legend"
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>

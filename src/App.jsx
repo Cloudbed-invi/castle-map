@@ -322,16 +322,16 @@ function App() {
           />
           
           {/* Static Map Key for Export */}
-          {(paletteColors.length > 0 || exportDate) && (
+          {(paletteColors.some(c => legendMap[c]?.trim()) || exportDate) && (
             <div className="export-legend" style={{ marginTop: '20px', padding: '15px', border: '2px solid #e2e8f0', borderRadius: '8px', backgroundColor: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ flex: 1 }}>
-                {paletteColors.length > 0 && <h3 style={{ margin: '0 0 10px 0', fontSize: '1.1rem', color: '#0f172a' }}>Map Key</h3>}
+                {paletteColors.some(c => legendMap[c]?.trim()) && <h3 style={{ margin: '0 0 10px 0', fontSize: '1.1rem', color: '#0f172a' }}>Map Key</h3>}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '10px' }}>
-                  {paletteColors.map((color, idx) => (
+                  {paletteColors.filter(c => legendMap[c]?.trim()).map((color, idx) => (
                     <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div style={{ width: '24px', height: '24px', backgroundColor: color, border: '1px solid #ccc', borderRadius: '4px' }} />
                       <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#334155' }}>
-                        {legendMap[color] || 'Unlabeled'}
+                        {legendMap[color]}
                       </span>
                     </div>
                   ))}
@@ -350,6 +350,7 @@ function App() {
         {showSettings && (
           <SettingsPanel 
             colors={paletteColors}
+            setColors={setPaletteColors}
             activeColor={activeColor}
             setActiveColor={setActiveColor}
             legendMap={legendMap}
