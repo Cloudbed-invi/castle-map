@@ -223,29 +223,32 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
     }
   };
 
-  const renderHandle = (id, index, p1, p2, controlsU) => {
+  const renderHandle = (id, cIndex, p1, p2, controlsU) => {
     if (isExport) return null;
-    const cx = ((p1.u + p2.u) / 2 - (p1.v + p2.v) / 2) * SIZE;
-    const cy = ((p1.u + p2.u) / 2 + (p1.v + p2.v) / 2) * SIZE;
-    
+    const isActive = dragState && dragState.id === id && dragState.cIndex === cIndex;
+    const classNames = `drag-handle ${isActive ? 'active' : ''}`;
+    const cursorType = controlsU ? 'nwse-resize' : 'nesw-resize';
     return (
-      <circle 
-        key={`handle-${id}-${index}`}
-        cx={cx} cy={cy} r="8" fill="white" stroke="#3b82f6" strokeWidth="2"
-        className="drag-handle"
-        onPointerDown={(e) => handlePointerDown(e, id, index + 1, controlsU)}
-        style={{ cursor: controlsU ? 'ns-resize' : 'ew-resize' }}
+      <line
+        x1={getPos(p1.u, p1.v).x} y1={getPos(p1.u, p1.v).y}
+        x2={getPos(p2.u, p2.v).x} y2={getPos(p2.u, p2.v).y}
+        strokeWidth="16" className={classNames}
+        onPointerDown={(e) => handlePointerDown(e, id, cIndex, controlsU)}
+        key={`drag-${id}-${cIndex}`}
+        style={{ cursor: cursorType }}
       />
     );
   };
 
   const renderNodeHandle = (id, nodeType, p) => {
     if (isExport) return null;
-    const pos = getPos(p.u, p.v);
+    const isActive = dragState && dragState.id === id && dragState.nodeType === nodeType;
     return (
       <circle
-        cx={pos.x} cy={pos.y} r="10" fill="#3b82f6"
-        className="drag-node"
+        cx={getPos(p.u, p.v).x} cy={getPos(p.u, p.v).y}
+        r="10" fill={isActive ? "rgba(59, 130, 246, 0.8)" : "rgba(59, 130, 246, 0.2)"}
+        stroke="rgba(59, 130, 246, 0.5)" strokeWidth="2"
+        className={`drag-node ${isActive ? 'active' : ''}`}
         onPointerDown={(e) => handleNodePointerDown(e, id, nodeType)}
         key={`node-${id}-${nodeType}`}
         style={{ cursor: 'move' }}
@@ -348,7 +351,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
 
   if (isExport) {
     return (
-      <div className="map-container" style={{ padding: 0 }}>
+      <div className="map-container" style={{ padding: 0, width: '800px', height: '800px' }}>
         {svgContent}
       </div>
     );
