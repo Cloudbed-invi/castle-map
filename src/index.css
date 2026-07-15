@@ -573,6 +573,7 @@ svg {
   }
 
   .header-buttons {
+    display: block;
     top: 10px;
     right: 10px;
     left: 10px;
@@ -604,6 +605,11 @@ svg {
     border-radius: 8px;
     border: 1px solid rgba(200, 200, 200, 0.5);
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .draw-pan-group button {
+    padding: 4px 10px !important;
+    font-size: 0.85rem !important;
   }
 
   .mobile-menu-toggle {
