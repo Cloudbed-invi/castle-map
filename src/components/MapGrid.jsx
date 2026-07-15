@@ -35,6 +35,15 @@ function getCellNumber(u, v) {
   return null;
 }
 
+function getLuminance(hex) {
+  if (!hex || !hex.startsWith('#')) return 255;
+  const rgb = parseInt(hex.slice(1), 16);
+  const r = (rgb >> 16) & 0xff;
+  const g = (rgb >>  8) & 0xff;
+  const b = (rgb >>  0) & 0xff;
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
 export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPointerEnter, zigzagColor, lines, setLines, floatingTexts, setFloatingTexts, selectedTextId, setSelectedTextId, mapTitle, mapSubtitle, interactionMode = 'draw', isExport = false }) {
   const SIZE = 24; 
   const svgRef = useRef(null);
@@ -59,7 +68,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
       const points = `${cx},${cy - SIZE} ${cx + SIZE},${cy} ${cx},${cy + SIZE} ${cx - SIZE},${cy}`;
       const fillColor = label ? '#ffffff' : (cellColors[num] || '#ffffff');
       
-      const isDark = fillColor === '#000000' || fillColor === '#1e293b';
+      const isDark = getLuminance(fillColor) < 128;
       const textColor = isDark ? '#ffffff' : (label ? "#94a3b8" : "#475569");
       const gridStroke = fillColor === '#000000' ? "#ef4444" : (isDark ? "rgba(255,255,255,0.3)" : "#cbd5e1");
       const thickStroke = label ? "#0f172a" : gridStroke; // Reverted back to dark slate
@@ -397,7 +406,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
         maxScale={4}
         disabled={false}
         panning={{ 
-          disabled: false,
+          disabled: interactionMode === 'draw',
           allowLeftClickPan: interactionMode === 'pan',
           allowRightClickPan: true 
         }}

@@ -11,6 +11,7 @@ const initialColors = ['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#
 function App() {
   const exportRef = useRef(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showShare, setShowShare] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showToolbar, setShowToolbar] = useState(true);
@@ -446,26 +447,14 @@ function App() {
             </button>
 
             <div className={`action-buttons ${showMobileMenu ? 'show' : ''}`}>
+              <button onClick={() => setShowSettings(true)}>
+                📝 Map Info & Settings
+              </button>
+              <button onClick={() => setShowShare(true)}>
+                📤 Share & Export
+              </button>
               <button onClick={() => setShowHelp(true)}>
                 ❓ Instructions
-              </button>
-              <button onClick={() => setShowSettings(true)}>
-                ⚙️ Settings
-              </button>
-              <button onClick={handleResetBorders}>
-                Reset Borders
-              </button>
-              <button onClick={handleCopyLongLink}>
-                🔗 Copy Link
-              </button>
-              <button className="purple" onClick={handleCopyShortLink}>
-                🪄 Short Link
-              </button>
-              <button className="warning" onClick={handleUploadImgbb}>
-                ☁️ Upload ImgBB
-              </button>
-              <button className="success" onClick={handleExportImage}>
-                Export Image
               </button>
             </div>
           </div>
@@ -508,8 +497,6 @@ function App() {
             legendMap={legendMap}
             setLegendMap={setLegendMap}
             onAddColor={handleAddColor}
-            cellColors={cellColors}
-            lines={lines}
             zigzagColor={zigzagColor}
             setZigzagColor={setZigzagColor}
             floatingTexts={floatingTexts}
@@ -521,14 +508,45 @@ function App() {
             exportDate={exportDate}
             setExportDate={setExportDate}
             imgbbKey={imgbbKey}
-            setImgbbKey={(k) => { setImgbbKey(k); localStorage.setItem('imgbbKey', k); }}
+            setImgbbKey={setImgbbKey}
             bitlyKey={bitlyKey}
-            setBitlyKey={(k) => { setBitlyKey(k); localStorage.setItem('bitlyKey', k); }}
+            setBitlyKey={setBitlyKey}
             tinyUrlKey={tinyUrlKey}
-            setTinyUrlKey={(k) => { setTinyUrlKey(k); localStorage.setItem('tinyUrlKey', k); }}
-            onClose={() => setShowSettings(false)}
+            setTinyUrlKey={setTinyUrlKey}
+            cellColors={cellColors}
+            lines={lines}
+            onResetBorders={handleResetBorders}
+            onClose={() => setShowSettings(false)} 
           />
         )}
+
+        {showShare && (
+          <div className="settings-modal-overlay">
+            <div className="settings-modal" style={{ maxWidth: '400px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
+                <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Share & Export</h2>
+                <button onClick={() => setShowShare(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <button className="success" onClick={handleExportImage} style={{ padding: '12px', width: '100%', justifyContent: 'center' }}>
+                  🖼️ Download Image (PNG)
+                </button>
+                <button onClick={handleCopyLongLink} style={{ padding: '12px', width: '100%', justifyContent: 'center' }}>
+                  🔗 Copy Map URL
+                </button>
+                <button className="purple" onClick={handleCopyShortLink} style={{ padding: '12px', width: '100%', justifyContent: 'center' }}>
+                  🪄 Generate Short Link (Bitly/TinyURL)
+                </button>
+                <button className="warning" onClick={handleUploadImgbb} style={{ padding: '12px', width: '100%', justifyContent: 'center' }}>
+                  ☁️ Upload to ImgBB
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
         
         {/* Off-screen Export Container */}
         <div 
