@@ -95,6 +95,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
       svgRef.current.setPointerCapture(e.pointerId);
     }
     setDragState({ id, nodeType, pointerId: e.pointerId });
+    e.stopPropagation();
   };
 
   const handleTextPointerDown = (e, id) => {
@@ -113,6 +114,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
       svgRef.current.setPointerCapture(e.pointerId);
     }
     setDragState({ id, cIndex, controlsU, pointerId: e.pointerId });
+    e.stopPropagation();
   };
 
   const handlePointerMove = (e) => {
