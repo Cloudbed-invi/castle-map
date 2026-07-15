@@ -5,8 +5,8 @@ import { HelpModal } from './components/HelpModal';
 import { toPng } from 'html-to-image';
 import LZString from 'lz-string';
 
-// Empty array so legends can be created dynamically
-const initialColors = [];
+// Default colors to avoid double palettes
+const initialColors = ['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#000000'];
 
 function App() {
   const exportRef = useRef(null);
@@ -23,7 +23,7 @@ function App() {
 
   const [cellColors, setCellColors] = useState({});
   const [paletteColors, setPaletteColors] = useState(initialColors);
-  const [activeColor, setActiveColor] = useState('#ef4444'); // Default red
+  const [activeColor, setActiveColor] = useState('#f472b6'); // Default to first color
   const [legendMap, setLegendMap] = useState({});
   const [paintState, setPaintState] = useState(null); // 'paint' or 'erase'
   const [history, setHistory] = useState([]);
@@ -476,13 +476,13 @@ function App() {
 
           <div className="palette-overlay">
             <span style={{ fontWeight: 'bold', color: '#334155', alignSelf: 'center', marginRight: '10px' }}>Palette:</span>
-            {['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#000000'].map(rc => (
+            {paletteColors.map(rc => (
               <div 
                 key={rc}
-                className="color-swatch"
+                className={`color-swatch ${activeColor === rc ? 'active' : ''}`}
                 style={{ backgroundColor: rc }}
-                onClick={() => handleAddColor(rc)}
-                title="Add to palette"
+                onClick={() => setActiveColor(rc)}
+                title="Select color"
               />
             ))}
             <div className="color-picker-wrapper" style={{ width: '28px', height: '28px' }}>
@@ -494,19 +494,6 @@ function App() {
                />
                <div className="color-picker-btn" style={{ fontSize: '1.2rem' }}>+</div>
             </div>
-
-            <div style={{ width: '2px', height: '28px', backgroundColor: '#e2e8f0', margin: '0 10px' }}></div>
-            
-            {paletteColors.length === 0 && <span style={{ fontSize: '0.8rem', color: '#94a3b8', alignSelf: 'center' }}>None selected</span>}
-            {paletteColors.map((color, index) => (
-              <div
-                key={`${color}-${index}`}
-                className={`color-swatch ${activeColor === color ? 'active' : ''}`}
-                style={{ backgroundColor: color }}
-                onClick={() => setActiveColor(color)}
-                title={legendMap[color] || 'Unlabeled'}
-              />
-            ))}
           </div>
         </div>
 
