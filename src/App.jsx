@@ -467,7 +467,7 @@ function App() {
 
             <div className={`action-buttons ${showMobileMenu ? 'show' : ''}`} style={{ zIndex: 100 }}>
               <button onClick={() => { setShowMapDetails(true); setShowMobileMenu(false); }}>
-                📝 Map Details & Legend
+                📝 Map Details
               </button>
               <button onClick={() => { setShowSettings(true); setShowMobileMenu(false); }}>
                 ⚙️ Map Settings
