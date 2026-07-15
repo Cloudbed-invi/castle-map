@@ -1,21 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { TransformWrapper, TransformComponent, useControls } from 'react-zoom-pan-pinch';
-
-const MapControls = () => {
-  const { resetTransform } = useControls();
-  return (
-    <button 
-      className="reset-view-btn" 
-      onClick={() => resetTransform()} 
-      title="Reset View"
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-    </button>
-  );
-};
+import React, { useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 function getCellNumber(u, v) {
   let r = Math.min(u, 13 - u, v, 13 - v);
@@ -47,12 +31,20 @@ function getLuminance(hex) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPointerEnter, zigzagColor, lines, setLines, floatingTexts, setFloatingTexts, selectedTextId, setSelectedTextId, mapTitle, mapSubtitle, interactionMode = 'draw', isExport = false }) {
+export const MapGrid = forwardRef(({ cellColors, activeColor, onCellPointerDown, onCellPointerEnter, zigzagColor, lines, setLines, floatingTexts, setFloatingTexts, selectedTextId, setSelectedTextId, mapTitle, mapSubtitle, interactionMode = 'draw', isExport = false }, ref) => {
   const SIZE = 24; 
   const svgRef = useRef(null);
   const transformRef = useRef(null);
   const lastRightClickTime = useRef(0);
   const [dragState, setDragState] = useState(null); // { id, cIndex, controlsU, nodeType, pointerId }
+
+  useImperativeHandle(ref, () => ({
+    resetView: () => {
+      if (transformRef.current) {
+        transformRef.current.resetTransform();
+      }
+    }
+  }));
 
   const cells = [];
   const labelCells = [];
@@ -421,8 +413,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
         <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
           {svgContent}
         </TransformComponent>
-        <MapControls />
       </TransformWrapper>
     </div>
   );
-}
+});

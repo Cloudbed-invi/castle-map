@@ -10,6 +10,7 @@ const initialColors = ['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#
 
 function App() {
   const exportRef = useRef(null);
+  const mapGridRef = useRef(null);
   const [showMapDetails, setShowMapDetails] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showShare, setShowShare] = useState(false);
@@ -382,6 +383,7 @@ function App() {
   const mapAndLegend = (isExportMode) => (
     <>
       <MapGrid 
+        ref={mapGridRef}
         cellColors={cellColors}
         activeColor={activeColor}
         onCellPointerDown={handleCellPointerDown}
@@ -448,6 +450,16 @@ function App() {
                 title="Pan / Zoom Mode"
               >
                 🖐️ Pan
+              </button>
+              <button
+                onClick={() => mapGridRef.current?.resetView()}
+                title="Reset View"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 12px' }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
               </button>
             </div>
           </div>
