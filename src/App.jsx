@@ -183,7 +183,7 @@ function App() {
     });
   };
 
-  const handleCopyShareLink = async () => {
+  const handleCopyShortLink = async () => {
     const state = {
       cellColors, paletteColors, activeColor, legendMap, 
       zigzagColor, floatingTexts, mapTitle, mapSubtitle, exportDate, lines
@@ -191,8 +191,27 @@ function App() {
     const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(state));
     const longUrl = window.location.origin + window.location.pathname + '#' + compressed;
     
-    let urlToCopy = longUrl;
+    let urlToCopy = null;
+
+    // Try free shortener first (is.gd supports CORS)
+    try {
+      const res = await fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.shorturl) urlToCopy = data.shorturl;
+      }
+    } catch (e) {
+      console.log("Free shortener failed, falling back...");
+    }
+
+    if (urlToCopy) {
+      navigator.clipboard.writeText(urlToCopy).then(() => {
+        alert("Short link copied to clipboard!");
+      });
+      return;
+    }
     
+    // Fallback to API keys
     if (tinyUrlKey) {
       try {
         const res = await fetch('https://api.tinyurl.com/create', {
@@ -208,11 +227,9 @@ function App() {
           urlToCopy = data.data.tiny_url;
         } else {
           console.error("TinyURL error:", data);
-          alert("TinyURL shortening failed. Using long URL.");
         }
       } catch (err) {
         console.error("TinyURL fetch error:", err);
-        alert("TinyURL shortening failed. Using long URL.");
       }
     } else if (bitlyKey) {
       try {
@@ -229,19 +246,30 @@ function App() {
           urlToCopy = data.link;
         } else {
           console.error("Bitly error:", data);
-          alert("Bitly shortening failed. Using long URL.");
         }
       } catch (err) {
         console.error("Bitly fetch error:", err);
-        alert("Bitly shortening failed. Using long URL.");
       }
     }
 
-    navigator.clipboard.writeText(urlToCopy).then(() => {
-      alert("Shareable link copied to clipboard! You can share this with anyone.");
-    }).catch(err => {
-      console.error("Failed to copy link:", err);
-      alert("Failed to copy link.");
+    if (urlToCopy) {
+      navigator.clipboard.writeText(urlToCopy).then(() => {
+        alert("Short link copied to clipboard using your API Key!");
+      });
+    } else {
+      alert("Map is too large for the free shortener! Please add a TinyURL or Bitly API Key in Settings.");
+    }
+  };
+
+  const handleCopyLongLink = () => {
+    const state = {
+      cellColors, paletteColors, activeColor, legendMap, 
+      zigzagColor, floatingTexts, mapTitle, mapSubtitle, exportDate, lines
+    };
+    const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(state));
+    const longUrl = window.location.origin + window.location.pathname + '#' + compressed;
+    navigator.clipboard.writeText(longUrl).then(() => {
+      alert("Full long link copied to clipboard! You can share this with anyone.");
     });
   };
 
@@ -395,8 +423,11 @@ function App() {
           <button onClick={handleResetBorders}>
             Reset Borders
           </button>
-          <button className="purple" onClick={handleCopyShareLink}>
-            🔗 Share Link
+          <button onClick={handleCopyLongLink}>
+            🔗 Copy Link
+          </button>
+          <button className="purple" onClick={handleCopyShortLink}>
+            🪄 Short Link
           </button>
           <button className="warning" onClick={handleUploadImgbb}>
             ☁️ Upload ImgBB
