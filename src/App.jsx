@@ -25,6 +25,7 @@ function App() {
   const [activeColor, setActiveColor] = useState('#ef4444'); // Default red
   const [legendMap, setLegendMap] = useState({});
   const [paintState, setPaintState] = useState(null); // 'paint' or 'erase'
+  const [history, setHistory] = useState([]);
   
   const [zigzagColor, setZigzagColor] = useState('#000000'); // Default black for zigzag
   const [floatingTexts, setFloatingTexts] = useState([]);
@@ -150,6 +151,7 @@ function App() {
   const handleCellPointerDown = (e, cellNumber) => {
     if (interactionMode !== 'draw') return;
     if (e.button !== 0 || !activeColor) return;
+    setHistory(prev => [...prev, cellColors].slice(-50)); // Keep last 50 states
     const mode = cellColors[cellNumber] === activeColor ? 'erase' : 'paint';
     setPaintState(mode);
     applyPaint(cellNumber, mode);
@@ -160,6 +162,26 @@ function App() {
     if (e.buttons !== 1 || !paintState || !activeColor) return;
     applyPaint(cellNumber, paintState);
   };
+
+  const handleUndo = () => {
+    if (history.length > 0) {
+      const newHistory = [...history];
+      const previousState = newHistory.pop();
+      setCellColors(previousState);
+      setHistory(newHistory);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        e.preventDefault();
+        handleUndo();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [history]);
 
   const handleAddColor = (newColor) => {
     if (!paletteColors.includes(newColor)) {

@@ -40,9 +40,18 @@ export function SettingsPanel({
   const handleAutoAlignTexts = () => {
     if (floatingTexts.length !== 4) return;
     
-    // Estimate map center for outward normals using the border lines
     let minU = Infinity, maxU = -Infinity, minV = Infinity, maxV = -Infinity;
-    if (lines) {
+    
+    const keys = Object.keys(cellColors || {});
+    if (keys.length > 0) {
+      keys.forEach(k => {
+        const [u, v] = k.split(',').map(Number);
+        if (u < minU) minU = u;
+        if (u > maxU) maxU = u;
+        if (v < minV) minV = v;
+        if (v > maxV) maxV = v;
+      });
+    } else if (lines) {
       ['n','s','e','w'].forEach(dir => {
         lines[dir]?.forEach(p => {
           if (p.u < minU) minU = p.u;
@@ -52,70 +61,44 @@ export function SettingsPanel({
         });
       });
     }
-    if (minU === Infinity) { minU=0; maxU=10; minV=0; maxV=10; }
-    
+
+    if (minU === Infinity) {
+      minU = 0; maxU = 10; minV = 0; maxV = 10;
+    }
+
+    // Map isometric helper
     const getPos = (u, v) => ({ x: (v - u) * 16, y: (u + v) * 8 });
-    const center = {
-      x: (getPos(minU, minV).x + getPos(maxU, maxV).x)/2,
-      y: (getPos(minU, minV).y + getPos(maxU, maxV).y)/2
-    };
+    
+    const top = getPos(minU, minV);
+    const right = getPos(minU, maxV);
+    const bottom = getPos(maxU, maxV);
+    const left = getPos(maxU, minV);
 
     const offset = 100;
-    const positions = [];
+    const angle = 26.565; // Exact isometric angle
 
-    // Process each border: Top-Left (n), Top-Right (e), Bottom-Right (s), Bottom-Left (w)
-    ['n', 'e', 's', 'w'].forEach(dir => {
-      const line = lines?.[dir];
-      if (!line || line.length < 2) {
-        positions.push({ x: 0, y: 0, rotate: 0 });
-        return;
-      }
-      
-      const p1 = getPos(line[0].u, line[0].v);
-      const p2 = getPos(line[line.length - 1].u, line[line.length - 1].v);
-      
-      let dx = p2.x - p1.x;
-      let dy = p2.y - p1.y;
-      
-      // Ensure text reads left-to-right (dx > 0)
-      if (dx < 0) {
-        dx = -dx;
-        dy = -dy;
-      } else if (dx === 0 && dy < 0) { // Vertical text, read top-down natively or bottom-up?
-        dy = -dy;
-      }
-
-      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-      const midX = (p1.x + p2.x) / 2;
-      const midY = (p1.y + p2.y) / 2;
-
-      // Normal candidates
-      let nx = -dy;
-      let ny = dx;
-      
-      // Outward vector
-      const vx = midX - center.x;
-      const vy = midY - center.y;
-      
-      // Dot product to pick outward normal
-      if (nx * vx + ny * vy < 0) {
-        nx = dy;
-        ny = -dx;
-      }
-      
-      // Normalize
-      const len = Math.sqrt(nx*nx + ny*ny);
-      if (len > 0) {
-        nx /= len;
-        ny /= len;
-      }
-
-      positions.push({
-        x: midX + nx * offset,
-        y: midY + ny * offset,
+    const positions = [
+      { // Top-Left (Left to Top)
+        x: (left.x + top.x)/2 - offset * 0.447,
+        y: (left.y + top.y)/2 - offset * 0.894,
+        rotate: -angle
+      },
+      { // Top-Right (Top to Right)
+        x: (top.x + right.x)/2 + offset * 0.447,
+        y: (top.y + right.y)/2 - offset * 0.894,
         rotate: angle
-      });
-    });
+      },
+      { // Bottom-Right (Right to Bottom)
+        x: (right.x + bottom.x)/2 + offset * 0.447,
+        y: (right.y + bottom.y)/2 + offset * 0.894,
+        rotate: -angle
+      },
+      { // Bottom-Left (Left to Bottom)
+        x: (left.x + bottom.x)/2 - offset * 0.447,
+        y: (left.y + bottom.y)/2 + offset * 0.894,
+        rotate: angle
+      }
+    ];
 
     setFloatingTexts(prev => prev.map((t, i) => ({
       ...t,
