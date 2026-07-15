@@ -12,6 +12,7 @@ export function SettingsPanel({
   imgbbKey, setImgbbKey,
   bitlyKey, setBitlyKey,
   tinyUrlKey, setTinyUrlKey,
+  cellColors, lines,
   onClose
 }) {
   const recommendedColors = ['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#000000'];
@@ -38,17 +39,71 @@ export function SettingsPanel({
 
   const handleAutoAlignTexts = () => {
     if (floatingTexts.length !== 4) return;
+    
+    let minU = Infinity, maxU = -Infinity, minV = Infinity, maxV = -Infinity;
+    
+    const keys = Object.keys(cellColors || {});
+    if (keys.length > 0) {
+      keys.forEach(k => {
+        const [u, v] = k.split(',').map(Number);
+        if (u < minU) minU = u;
+        if (u > maxU) maxU = u;
+        if (v < minV) minV = v;
+        if (v > maxV) maxV = v;
+      });
+    } else if (lines) {
+      ['n','s','e','w'].forEach(dir => {
+        lines[dir]?.forEach(p => {
+          if (p.u < minU) minU = p.u;
+          if (p.u > maxU) maxU = p.u;
+          if (p.v < minV) minV = p.v;
+          if (p.v > maxV) maxV = p.v;
+        });
+      });
+    }
+
+    if (minU === Infinity) {
+      minU = 0; maxU = 10; minV = 0; maxV = 10;
+    }
+
+    // Map isometric helper
+    const getPos = (u, v) => ({ x: (v - u) * 16, y: (u + v) * 8 });
+    
+    const top = getPos(minU, minV);
+    const right = getPos(minU, maxV);
+    const bottom = getPos(maxU, maxV);
+    const left = getPos(maxU, minV);
+
+    const offset = 100;
+    const angle = 26.565; // Exact isometric angle
+
     const positions = [
-      { x: -450, y: 180, rotate: -26.5 }, // Top-Left
-      { x:  450, y: 180, rotate:  26.5 }, // Top-Right
-      { x:  450, y: 620, rotate: -26.5 }, // Bottom-Right
-      { x: -450, y: 620, rotate:  26.5 }, // Bottom-Left
+      { // Top-Left (Left to Top)
+        x: (left.x + top.x)/2 - offset * 0.447,
+        y: (left.y + top.y)/2 - offset * 0.894,
+        rotate: -angle
+      },
+      { // Top-Right (Top to Right)
+        x: (top.x + right.x)/2 + offset * 0.447,
+        y: (top.y + right.y)/2 - offset * 0.894,
+        rotate: angle
+      },
+      { // Bottom-Right (Right to Bottom)
+        x: (right.x + bottom.x)/2 + offset * 0.447,
+        y: (right.y + bottom.y)/2 + offset * 0.894,
+        rotate: -angle
+      },
+      { // Bottom-Left (Left to Bottom)
+        x: (left.x + bottom.x)/2 - offset * 0.447,
+        y: (left.y + bottom.y)/2 + offset * 0.894,
+        rotate: angle
+      }
     ];
 
     setFloatingTexts(prev => prev.map((t, i) => ({
       ...t,
-      x: positions[i].x,
-      y: positions[i].y,
+      x: Math.round(positions[i].x),
+      y: Math.round(positions[i].y),
       rotate: positions[i].rotate
     })));
   };
@@ -132,8 +187,8 @@ export function SettingsPanel({
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.7rem', width: '30px', color: '#64748b' }}>Angle</span>
-                  <input type="range" min="-180" max="180" value={item.rotate || 0} onChange={(e) => handleUpdateTextProp(item.id, 'rotate', Number(e.target.value))} style={{ flex: 1, cursor: 'pointer' }} />
-                  <span style={{ fontSize: '0.7rem', width: '20px', color: '#64748b', textAlign: 'right' }}>{item.rotate || 0}°</span>
+                  <input type="range" min="-180" max="180" step="0.001" value={item.rotate || 0} onChange={(e) => handleUpdateTextProp(item.id, 'rotate', Number(e.target.value))} style={{ flex: 1, cursor: 'pointer' }} />
+                  <span style={{ fontSize: '0.7rem', width: '20px', color: '#64748b', textAlign: 'right' }}>{Number(item.rotate || 0).toFixed(1)}°</span>
                 </div>
               </div>
             ))}

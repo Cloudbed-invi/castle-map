@@ -487,6 +487,8 @@ function App() {
             legendMap={legendMap}
             setLegendMap={setLegendMap}
             onAddColor={handleAddColor}
+            cellColors={cellColors}
+            lines={lines}
             zigzagColor={zigzagColor}
             setZigzagColor={setZigzagColor}
             floatingTexts={floatingTexts}
