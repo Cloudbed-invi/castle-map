@@ -422,7 +422,7 @@ function App() {
 
       <div className="header-buttons">
           <div className="primary-actions">
-            <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.5)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+            <div className="draw-pan-group" style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.5)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
               <button 
                 className={interactionMode === 'draw' ? 'primary' : ''} 
                 onClick={() => setInteractionMode('draw')}
