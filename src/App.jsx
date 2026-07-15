@@ -138,9 +138,6 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedTextId]);
 
-  const handleResetBorders = () => {
-    setLines(initialLines);
-  };
 
   const handleResetEntireMap = () => {
     if (window.confirm("Are you sure you want to completely clear the map? This will delete all drawn cells, floating texts, and reset borders.")) {
