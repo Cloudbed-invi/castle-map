@@ -2,8 +2,8 @@ import React from 'react';
 
 export function HelpModal({ onClose }) {
   return (
-    <div className="settings-modal-overlay">
-      <div className="settings-modal" style={{ maxWidth: '600px' }}>
+    <div className="settings-modal-overlay" onClick={onClose}>
+      <div className="settings-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
           <h2 style={{ margin: 0, fontSize: '1.25rem' }}>How to Use the Map Editor</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>

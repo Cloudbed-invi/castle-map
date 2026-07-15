@@ -10,6 +10,7 @@ const initialColors = ['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#
 
 function App() {
   const exportRef = useRef(null);
+  const [showMapDetails, setShowMapDetails] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
@@ -136,6 +137,19 @@ function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedTextId]);
+
+  const handleResetBorders = () => {
+    setLines(initialLines);
+  };
+
+  const handleResetEntireMap = () => {
+    if (window.confirm("Are you sure you want to completely clear the map? This will delete all drawn cells, floating texts, and reset borders.")) {
+      setCellColors({});
+      setFloatingTexts([]);
+      handleResetBorders();
+      setShowSettings(false);
+    }
+  };
 
   const applyPaint = (cellNumber, mode) => {
     setCellColors(prev => {
@@ -446,14 +460,25 @@ function App() {
               {showMobileMenu ? '✕' : '⚙️'}
             </button>
 
-            <div className={`action-buttons ${showMobileMenu ? 'show' : ''}`}>
-              <button onClick={() => setShowSettings(true)}>
-                📝 Map Info & Settings
+            {showMobileMenu && (
+              <div 
+                className="mobile-menu-overlay" 
+                onClick={() => setShowMobileMenu(false)}
+                style={{ position: 'fixed', inset: 0, zIndex: 99 }}
+              />
+            )}
+
+            <div className={`action-buttons ${showMobileMenu ? 'show' : ''}`} style={{ zIndex: 100 }}>
+              <button onClick={() => { setShowMapDetails(true); setShowMobileMenu(false); }}>
+                📝 Map Details & Legend
               </button>
-              <button onClick={() => setShowShare(true)}>
+              <button onClick={() => { setShowSettings(true); setShowMobileMenu(false); }}>
+                ⚙️ Map Settings
+              </button>
+              <button onClick={() => { setShowShare(true); setShowMobileMenu(false); }}>
                 📤 Share & Export
               </button>
-              <button onClick={() => setShowHelp(true)}>
+              <button onClick={() => { setShowHelp(true); setShowMobileMenu(false); }}>
                 ❓ Instructions
               </button>
             </div>
@@ -488,7 +513,7 @@ function App() {
           </div>
         </div>
 
-        {showSettings && (
+        {showMapDetails && (
           <SettingsPanel 
             colors={paletteColors}
             setColors={setPaletteColors}
@@ -507,22 +532,56 @@ function App() {
             setMapSubtitle={setMapSubtitle}
             exportDate={exportDate}
             setExportDate={setExportDate}
-            imgbbKey={imgbbKey}
-            setImgbbKey={setImgbbKey}
-            bitlyKey={bitlyKey}
-            setBitlyKey={setBitlyKey}
-            tinyUrlKey={tinyUrlKey}
-            setTinyUrlKey={setTinyUrlKey}
             cellColors={cellColors}
             lines={lines}
-            onResetBorders={handleResetBorders}
-            onClose={() => setShowSettings(false)} 
+            onClose={() => setShowMapDetails(false)} 
           />
         )}
 
+        {showSettings && (
+          <div className="settings-modal-overlay" onClick={() => setShowSettings(false)}>
+            <div className="settings-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
+                <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Map Settings</h2>
+                <button onClick={() => setShowSettings(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
+              </div>
+
+              <div className="settings-section" style={{ marginBottom: '1.5rem' }}>
+                <h3>API Keys (Optional)</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <label style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155' }}>ImgBB API Key (Image Hosting)</label>
+                  <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 0.25rem 0' }}>Get a free key at <a href="https://api.imgbb.com/" target="_blank" rel="noreferrer" style={{ color: '#3b82f6' }}>api.imgbb.com</a></p>
+                  <input type="text" placeholder="Your ImgBB API Key" value={imgbbKey} onChange={(e) => { setImgbbKey(e.target.value); localStorage.setItem('imgbbKey', e.target.value); }} style={{ padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }} />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <label style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155' }}>Bitly API Key (URL Shortener)</label>
+                  <input type="text" placeholder="Your Bitly Access Token" value={bitlyKey} onChange={(e) => { setBitlyKey(e.target.value); localStorage.setItem('bitlyKey', e.target.value); }} style={{ padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }} />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155' }}>TinyURL API Key</label>
+                  <input type="text" placeholder="Your TinyURL API Token" value={tinyUrlKey} onChange={(e) => { setTinyUrlKey(e.target.value); localStorage.setItem('tinyUrlKey', e.target.value); }} style={{ padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }} />
+                </div>
+              </div>
+
+              <div className="settings-section" style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
+                <h3>Reset Options</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <button onClick={handleResetBorders} style={{ padding: '0.75rem', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    Reset Map Borders
+                  </button>
+                  <button onClick={handleResetEntireMap} style={{ padding: '0.75rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    Reset Entire Map
+                  </button>
+                </div>
+                <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem', textAlign: 'center' }}>Warning: Reset Entire Map will delete all painted blocks and texts.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {showShare && (
-          <div className="settings-modal-overlay">
-            <div className="settings-modal" style={{ maxWidth: '400px' }}>
+          <div className="settings-modal-overlay" onClick={() => setShowShare(false)}>
+            <div className="settings-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
                 <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Share & Export</h2>
                 <button onClick={() => setShowShare(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>

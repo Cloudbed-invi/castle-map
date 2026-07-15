@@ -9,11 +9,6 @@ export function SettingsPanel({
   mapTitle, setMapTitle,
   mapSubtitle, setMapSubtitle,
   exportDate, setExportDate,
-  imgbbKey, setImgbbKey,
-  bitlyKey, setBitlyKey,
-  tinyUrlKey, setTinyUrlKey,
-  cellColors, lines,
-  onResetBorders,
   onClose
 }) {
   const recommendedColors = ['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#000000'];
@@ -105,26 +100,14 @@ export function SettingsPanel({
   };
 
   return (
-    <div className="settings-modal-overlay">
-      <div className="settings-modal">
+    <div className="settings-modal-overlay" onClick={onClose}>
+      <div className="settings-modal" onClick={e => e.stopPropagation()}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
-          <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Map Info & Settings</h2>
+          <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Map Details & Legend</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
         </div>
 
-        {onResetBorders && (
-          <div className="settings-section">
-            <button 
-              onClick={onResetBorders}
-              style={{ width: '100%', padding: '0.75rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
-            >
-              Reset Map Borders
-            </button>
-            <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem', textAlign: 'center' }}>This will revert the outer zigzag border back to the default diamond shape.</p>
-          </div>
-        )}
-
-        <div className="settings-section" style={{ marginTop: '1.5rem' }}>
+        <div className="settings-section">
           <h3>Border Line</h3>
           <div className="color-options">
             <div className="color-picker-wrapper" style={{ borderColor: zigzagColor, width: '28px', height: '28px' }}>
@@ -201,51 +184,6 @@ export function SettingsPanel({
               </div>
             ))}
             {floatingTexts.length === 0 && <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>No floating texts</span>}
-          </div>
-        </div>
-        <div className="settings-section" style={{ marginTop: '1.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
-          <h3>API Keys (Optional)</h3>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
-            <label style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155' }}>ImgBB API Key (Image Hosting)</label>
-            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 0.25rem 0' }}>
-              Used to host images for sharing. Get a free key at <a href="https://api.imgbb.com/" target="_blank" rel="noreferrer" style={{ color: '#3b82f6' }}>api.imgbb.com</a>
-            </p>
-            <input 
-              type="text" 
-              placeholder="Your ImgBB API Key"
-              value={imgbbKey} 
-              onChange={(e) => { setImgbbKey(e.target.value); localStorage.setItem('imgbbKey', e.target.value); }}
-              style={{ padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
-            <label style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155' }}>Bitly API Key (URL Shortener)</label>
-            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 0.25rem 0' }}>
-              To shorten Share Links with Bitly, enter a Bitly API Key (Bearer Token).
-            </p>
-            <input 
-              type="text" 
-              placeholder="Your Bitly Access Token"
-              value={bitlyKey} 
-              onChange={(e) => { setBitlyKey(e.target.value); localStorage.setItem('bitlyKey', e.target.value); }}
-              style={{ padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155' }}>TinyURL API Key (URL Shortener Alternative)</label>
-            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 0.25rem 0' }}>
-              Enter a TinyURL API Token to shorten links with TinyURL instead of Bitly.
-            </p>
-            <input 
-              type="text" 
-              placeholder="Your TinyURL API Token"
-              value={tinyUrlKey} 
-              onChange={(e) => { setTinyUrlKey(e.target.value); localStorage.setItem('tinyUrlKey', e.target.value); }}
-              style={{ padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
-            />
           </div>
         </div>
 
