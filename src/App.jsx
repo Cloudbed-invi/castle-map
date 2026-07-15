@@ -420,8 +420,8 @@ function App() {
         <p>Interactive diamond grid map editor</p>
       </header>
 
-      <div className="header-buttons">
-          <div className="primary-actions">
+      <div className="ui-top-container">
+          <div className="draw-pan-wrapper">
             <div className="draw-pan-group">
               <button 
                 className={interactionMode === 'draw' ? 'primary' : ''} 
@@ -438,34 +438,36 @@ function App() {
                 🖐️ Pan
               </button>
             </div>
-            
+          </div>
+          
+          <div className="tools-menu-wrapper">
             <button className="mobile-menu-toggle" onClick={() => setShowMobileMenu(!showMobileMenu)}>
               {showMobileMenu ? '✕' : '⚙️'}
             </button>
-          </div>
 
-          <div className={`action-buttons ${showMobileMenu ? 'show' : ''}`}>
-            <button onClick={() => setShowHelp(true)}>
-              ❓ Instructions
-            </button>
-            <button onClick={() => setShowSettings(true)}>
-              ⚙️ Settings
-            </button>
-            <button onClick={handleResetBorders}>
-              Reset Borders
-            </button>
-            <button onClick={handleCopyLongLink}>
-              🔗 Copy Link
-            </button>
-            <button className="purple" onClick={handleCopyShortLink}>
-              🪄 Short Link
-            </button>
-            <button className="warning" onClick={handleUploadImgbb}>
-              ☁️ Upload ImgBB
-            </button>
-            <button className="success" onClick={handleExportImage}>
-              Export Image
-            </button>
+            <div className={`action-buttons ${showMobileMenu ? 'show' : ''}`}>
+              <button onClick={() => setShowHelp(true)}>
+                ❓ Instructions
+              </button>
+              <button onClick={() => setShowSettings(true)}>
+                ⚙️ Settings
+              </button>
+              <button onClick={handleResetBorders}>
+                Reset Borders
+              </button>
+              <button onClick={handleCopyLongLink}>
+                🔗 Copy Link
+              </button>
+              <button className="purple" onClick={handleCopyShortLink}>
+                🪄 Short Link
+              </button>
+              <button className="warning" onClick={handleUploadImgbb}>
+                ☁️ Upload ImgBB
+              </button>
+              <button className="success" onClick={handleExportImage}>
+                Export Image
+              </button>
+            </div>
           </div>
       </div>
 
