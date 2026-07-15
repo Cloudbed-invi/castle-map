@@ -538,3 +538,54 @@ svg {
 .drag-handle.active {
   stroke: rgba(59, 130, 246, 0.6); /* Stronger blue when dragging */
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .header {
+    display: none;
+  }
+
+  .header-buttons {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .primary-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .mobile-menu-toggle {
+    display: flex !important;
+  }
+
+  .action-buttons {
+    display: none !important;
+  }
+
+  .action-buttons.show {
+    display: flex !important;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .palette-overlay {
+    bottom: 10px;
+    width: calc(100% - 20px);
+    max-width: none;
+    padding: 8px 12px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .color-swatch {
+    flex-shrink: 0;
+  }
+}

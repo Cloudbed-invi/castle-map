@@ -12,6 +12,7 @@ function App() {
   const exportRef = useRef(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showToolbar, setShowToolbar] = useState(true);
   const [interactionMode, setInteractionMode] = useState('draw'); // 'draw' or 'pan'
   const [isLoaded, setIsLoaded] = useState(false);
@@ -420,43 +421,52 @@ function App() {
       </header>
 
       <div className="header-buttons">
-          <div style={{ display: 'flex', gap: '4px', marginRight: '8px', background: 'rgba(255,255,255,0.5)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-            <button 
-              className={interactionMode === 'draw' ? 'primary' : ''} 
-              onClick={() => setInteractionMode('draw')}
-              title="Draw Mode"
-            >
-              🖌️ Draw
-            </button>
-            <button 
-              className={interactionMode === 'pan' ? 'primary' : ''} 
-              onClick={() => setInteractionMode('pan')}
-              title="Pan / Zoom Mode"
-            >
-              🖐️ Pan
+          <div className="primary-actions">
+            <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.5)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+              <button 
+                className={interactionMode === 'draw' ? 'primary' : ''} 
+                onClick={() => setInteractionMode('draw')}
+                title="Draw Mode"
+              >
+                🖌️ Draw
+              </button>
+              <button 
+                className={interactionMode === 'pan' ? 'primary' : ''} 
+                onClick={() => setInteractionMode('pan')}
+                title="Pan / Zoom Mode"
+              >
+                🖐️ Pan
+              </button>
+            </div>
+            
+            <button className="mobile-menu-toggle" onClick={() => setShowMobileMenu(!showMobileMenu)} style={{ display: 'none' }}>
+              {showMobileMenu ? '✕ Close' : '☰ Tools'}
             </button>
           </div>
-          <button onClick={() => setShowHelp(true)}>
-            ❓ Instructions
-          </button>
-          <button onClick={() => setShowSettings(true)}>
-            ⚙️ Settings
-          </button>
-          <button onClick={handleResetBorders}>
-            Reset Borders
-          </button>
-          <button onClick={handleCopyLongLink}>
-            🔗 Copy Link
-          </button>
-          <button className="purple" onClick={handleCopyShortLink}>
-            🪄 Short Link
-          </button>
-          <button className="warning" onClick={handleUploadImgbb}>
-            ☁️ Upload ImgBB
-          </button>
-          <button className="success" onClick={handleExportImage}>
-            Export Image
-          </button>
+
+          <div className={`action-buttons ${showMobileMenu ? 'show' : ''}`} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <button onClick={() => setShowHelp(true)}>
+              ❓ Instructions
+            </button>
+            <button onClick={() => setShowSettings(true)}>
+              ⚙️ Settings
+            </button>
+            <button onClick={handleResetBorders}>
+              Reset Borders
+            </button>
+            <button onClick={handleCopyLongLink}>
+              🔗 Copy Link
+            </button>
+            <button className="purple" onClick={handleCopyShortLink}>
+              🪄 Short Link
+            </button>
+            <button className="warning" onClick={handleUploadImgbb}>
+              ☁️ Upload ImgBB
+            </button>
+            <button className="success" onClick={handleExportImage}>
+              Export Image
+            </button>
+          </div>
       </div>
 
       <main className="main-content">
