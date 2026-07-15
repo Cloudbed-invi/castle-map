@@ -17,6 +17,7 @@ function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [imgbbKey, setImgbbKey] = useState(() => localStorage.getItem('imgbbKey') || '');
   const [bitlyKey, setBitlyKey] = useState(() => localStorage.getItem('bitlyKey') || '');
+  const [tinyUrlKey, setTinyUrlKey] = useState(() => localStorage.getItem('tinyUrlKey') || '');
   const [selectedTextId, setSelectedTextId] = useState(null);
 
   const [cellColors, setCellColors] = useState({});
@@ -192,7 +193,28 @@ function App() {
     
     let urlToCopy = longUrl;
     
-    if (bitlyKey) {
+    if (tinyUrlKey) {
+      try {
+        const res = await fetch('https://api.tinyurl.com/create', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${tinyUrlKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ url: longUrl, domain: "tinyurl.com" })
+        });
+        const data = await res.json();
+        if (data.data && data.data.tiny_url) {
+          urlToCopy = data.data.tiny_url;
+        } else {
+          console.error("TinyURL error:", data);
+          alert("TinyURL shortening failed. Using long URL.");
+        }
+      } catch (err) {
+        console.error("TinyURL fetch error:", err);
+        alert("TinyURL shortening failed. Using long URL.");
+      }
+    } else if (bitlyKey) {
       try {
         const res = await fetch('https://api-ssl.bitly.com/v4/shorten', {
           method: 'POST',
@@ -448,6 +470,8 @@ function App() {
             setImgbbKey={(k) => { setImgbbKey(k); localStorage.setItem('imgbbKey', k); }}
             bitlyKey={bitlyKey}
             setBitlyKey={(k) => { setBitlyKey(k); localStorage.setItem('bitlyKey', k); }}
+            tinyUrlKey={tinyUrlKey}
+            setTinyUrlKey={(k) => { setTinyUrlKey(k); localStorage.setItem('tinyUrlKey', k); }}
             onClose={() => setShowSettings(false)}
           />
         )}

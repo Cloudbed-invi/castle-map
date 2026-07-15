@@ -11,6 +11,7 @@ export function SettingsPanel({
   exportDate, setExportDate,
   imgbbKey, setImgbbKey,
   bitlyKey, setBitlyKey,
+  tinyUrlKey, setTinyUrlKey,
   onClose
 }) {
   const recommendedColors = ['#f472b6', '#60a5fa', '#fb923c', '#86efac', '#c084fc', '#000000'];
@@ -134,16 +135,30 @@ export function SettingsPanel({
             />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
             <label style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155' }}>Bitly API Key (URL Shortener)</label>
             <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 0.25rem 0' }}>
-              To shorten Share Links, enter a Bitly API Key (Bearer Token).
+              To shorten Share Links with Bitly, enter a Bitly API Key (Bearer Token).
             </p>
             <input 
               type="text" 
               placeholder="Your Bitly Access Token"
               value={bitlyKey} 
               onChange={(e) => setBitlyKey(e.target.value)}
+              style={{ padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155' }}>TinyURL API Key (URL Shortener Alternative)</label>
+            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 0.25rem 0' }}>
+              Enter a TinyURL API Token to shorten links with TinyURL instead of Bitly.
+            </p>
+            <input 
+              type="text" 
+              placeholder="Your TinyURL API Token"
+              value={tinyUrlKey} 
+              onChange={(e) => setTinyUrlKey(e.target.value)}
               style={{ padding: '0.25rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
             />
           </div>
