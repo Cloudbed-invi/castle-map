@@ -40,63 +40,38 @@ export function SettingsPanel({
   const handleAutoAlignTexts = () => {
     if (floatingTexts.length !== 4) return;
     
-    let minU = Infinity, maxU = -Infinity, minV = Infinity, maxV = -Infinity;
-    
-    const keys = Object.keys(cellColors || {});
-    if (keys.length > 0) {
-      keys.forEach(k => {
-        const [u, v] = k.split(',').map(Number);
-        if (u < minU) minU = u;
-        if (u > maxU) maxU = u;
-        if (v < minV) minV = v;
-        if (v > maxV) maxV = v;
-      });
-    } else if (lines) {
-      ['n','s','e','w'].forEach(dir => {
-        lines[dir]?.forEach(p => {
-          if (p.u < minU) minU = p.u;
-          if (p.u > maxU) maxU = p.u;
-          if (p.v < minV) minV = p.v;
-          if (p.v > maxV) maxV = p.v;
-        });
-      });
-    }
+    // The map is a fixed 14x14 grid.
+    // u goes from 0 to 13, v goes from 0 to 13.
+    // MapGrid logic: x = (u - v) * 24, y = (u + v) * 24.
+    // This forms a perfect diamond with a 45 degree angle.
+    // Top node (0,0): 0, 0
+    // Right node (13,0): 312, 312
+    // Bottom node (13,13): 0, 624
+    // Left node (0,13): -312, 312
 
-    if (minU === Infinity) {
-      minU = 0; maxU = 10; minV = 0; maxV = 10;
-    }
-
-    // Map isometric helper
-    const getPos = (u, v) => ({ x: (v - u) * 16, y: (u + v) * 8 });
-    
-    const top = getPos(minU, minV);
-    const right = getPos(minU, maxV);
-    const bottom = getPos(maxU, maxV);
-    const left = getPos(maxU, minV);
-
-    const offset = 100;
-    const angle = 26.565; // Exact isometric angle
+    const offset = 70; // Distance to push text outward from edges
+    const cos45 = 0.7071;
 
     const positions = [
-      { // Top-Left (Left to Top)
-        x: (left.x + top.x)/2 - offset * 0.447,
-        y: (left.y + top.y)/2 - offset * 0.894,
-        rotate: -angle
+      { // Top-Left
+        x: -156 - offset * cos45,
+        y: 156 - offset * cos45,
+        rotate: -45
       },
-      { // Top-Right (Top to Right)
-        x: (top.x + right.x)/2 + offset * 0.447,
-        y: (top.y + right.y)/2 - offset * 0.894,
-        rotate: angle
+      { // Top-Right
+        x: 156 + offset * cos45,
+        y: 156 - offset * cos45,
+        rotate: 45
       },
-      { // Bottom-Right (Right to Bottom)
-        x: (right.x + bottom.x)/2 + offset * 0.447,
-        y: (right.y + bottom.y)/2 + offset * 0.894,
-        rotate: -angle
+      { // Bottom-Right
+        x: 156 + offset * cos45,
+        y: 468 + offset * cos45,
+        rotate: -45
       },
-      { // Bottom-Left (Left to Bottom)
-        x: (left.x + bottom.x)/2 - offset * 0.447,
-        y: (left.y + bottom.y)/2 + offset * 0.894,
-        rotate: angle
+      { // Bottom-Left
+        x: -156 - offset * cos45,
+        y: 468 + offset * cos45,
+        rotate: 45
       }
     ];
 
