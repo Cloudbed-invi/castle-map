@@ -36,6 +36,23 @@ export function SettingsPanel({
     setFloatingTexts(prev => prev.filter(t => t.id !== id));
   };
 
+  const handleAutoAlignTexts = () => {
+    if (floatingTexts.length !== 4) return;
+    const positions = [
+      { x: -450, y: 180, rotate: -26.5 }, // Top-Left
+      { x:  450, y: 180, rotate:  26.5 }, // Top-Right
+      { x:  450, y: 620, rotate: -26.5 }, // Bottom-Right
+      { x: -450, y: 620, rotate:  26.5 }, // Bottom-Left
+    ];
+
+    setFloatingTexts(prev => prev.map((t, i) => ({
+      ...t,
+      x: positions[i].x,
+      y: positions[i].y,
+      rotate: positions[i].rotate
+    })));
+  };
+
   return (
     <div className="settings-modal-overlay">
       <div className="settings-modal">
@@ -90,7 +107,12 @@ export function SettingsPanel({
 
         <div className="settings-section" style={{ marginTop: '1.5rem' }}>
           <h3>Floating Texts</h3>
-          <button onClick={handleAddText} style={{ padding: '0.25rem 0.75rem', borderRadius: '4px', background: '#3b82f6', color: 'white', border: 'none', cursor: 'pointer', marginBottom: '1rem' }}>+ Add Text</button>
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+            <button onClick={handleAddText} style={{ padding: '0.25rem 0.75rem', borderRadius: '4px', background: '#3b82f6', color: 'white', border: 'none', cursor: 'pointer' }}>+ Add Text</button>
+            {floatingTexts.length === 4 && (
+              <button onClick={handleAutoAlignTexts} style={{ padding: '0.25rem 0.75rem', borderRadius: '4px', background: '#10b981', color: 'white', border: 'none', cursor: 'pointer' }}>⌖ Auto-Align 4 Sides</button>
+            )}
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {floatingTexts.map(item => (
               <div key={item.id} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', padding: '0.5rem', background: '#f8fafc', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
