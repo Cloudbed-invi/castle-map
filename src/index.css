@@ -26,6 +26,7 @@ body {
   background-size: 24px 24px;
   color: var(--text-primary);
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
   overflow: hidden;
   margin: 0;
@@ -37,6 +38,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
 }
 
@@ -45,6 +47,7 @@ body {
   flex-direction: column;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   margin: 0;
   padding: 0;
   overflow: hidden;
