@@ -75,12 +75,32 @@ export function SettingsPanel({
       }
     ];
 
-    setFloatingTexts(prev => prev.map((t, i) => ({
-      ...t,
-      x: Math.round(positions[i].x),
-      y: Math.round(positions[i].y),
-      rotate: positions[i].rotate
-    })));
+    const availablePositions = [...positions];
+    
+    setFloatingTexts(prev => prev.map(t => {
+      let closestIdx = -1;
+      let minDistance = Infinity;
+      
+      for (let i = 0; i < availablePositions.length; i++) {
+        const p = availablePositions[i];
+        if (!p) continue;
+        const dist = Math.pow(t.x - p.x, 2) + Math.pow(t.y - p.y, 2);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestIdx = i;
+        }
+      }
+      
+      const matchedPos = availablePositions[closestIdx];
+      availablePositions[closestIdx] = null; // Mark as used
+      
+      return {
+        ...t,
+        x: Math.round(matchedPos.x),
+        y: Math.round(matchedPos.y),
+        rotate: matchedPos.rotate
+      };
+    }));
   };
 
   return (

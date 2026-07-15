@@ -324,6 +324,7 @@ export function MapGrid({ cellColors, activeColor, onCellPointerDown, onCellPoin
             <g key={t.id} transform={`translate(${t.x}, ${t.y}) rotate(${t.rotate || 0})`}>
               <text 
                 textAnchor="middle" 
+                dominantBaseline="middle"
                 fontSize={t.size || 48} 
                 fontWeight="bold" 
                 fill="#0f172a"
