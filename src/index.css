@@ -539,6 +539,33 @@ svg {
   stroke: rgba(59, 130, 246, 0.6); /* Stronger blue when dragging */
 }
 
+/* Desktop layout for header groups */
+.primary-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.draw-pan-group {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.5);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.mobile-menu-toggle {
+  display: none;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .header {

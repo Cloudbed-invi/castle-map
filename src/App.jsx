@@ -422,7 +422,7 @@ function App() {
 
       <div className="header-buttons">
           <div className="primary-actions">
-            <div className="draw-pan-group" style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.5)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+            <div className="draw-pan-group">
               <button 
                 className={interactionMode === 'draw' ? 'primary' : ''} 
                 onClick={() => setInteractionMode('draw')}
@@ -439,12 +439,12 @@ function App() {
               </button>
             </div>
             
-            <button className="mobile-menu-toggle" onClick={() => setShowMobileMenu(!showMobileMenu)} style={{ display: 'none' }}>
-              {showMobileMenu ? '✕ Close' : '☰ Tools'}
+            <button className="mobile-menu-toggle" onClick={() => setShowMobileMenu(!showMobileMenu)}>
+              {showMobileMenu ? '✕' : '⚙️'}
             </button>
           </div>
 
-          <div className={`action-buttons ${showMobileMenu ? 'show' : ''}`} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div className={`action-buttons ${showMobileMenu ? 'show' : ''}`}>
             <button onClick={() => setShowHelp(true)}>
               ❓ Instructions
             </button>
