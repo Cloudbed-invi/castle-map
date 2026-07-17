@@ -378,10 +378,10 @@ function App() {
       });
   };
 
-  const mapAndLegend = (isExportMode) => (
+  const mapAndLegend = (isExportMode, gridRef = null) => (
     <>
       <MapGrid 
-        ref={mapGridRef}
+        ref={gridRef}
         cellColors={cellColors}
         activeColor={activeColor}
         onCellPointerDown={handleCellPointerDown}
@@ -511,7 +511,7 @@ function App() {
       <main className="main-content">
         
         <div className="live-container">
-          {mapAndLegend(false)}
+          {mapAndLegend(false, mapGridRef)}
 
           <div className="palette-overlay">
             <span style={{ fontWeight: 'bold', color: '#334155', alignSelf: 'center', marginRight: '10px' }}>Palette:</span>
