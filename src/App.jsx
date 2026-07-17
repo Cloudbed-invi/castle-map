@@ -332,6 +332,16 @@ function App() {
     return true;
   };
 
+  const getSafePixelRatio = (node) => {
+    if (!node) return 2;
+    const rect = node.getBoundingClientRect();
+    const currentArea = rect.width * rect.height;
+    if (currentArea === 0) return 2;
+    const maxSafeArea = 15000000; // 15 million pixels (safely under iOS 16.7M limit)
+    const maxRatio = Math.sqrt(maxSafeArea / currentArea);
+    return Math.max(1, Math.min(3, maxRatio)); // cap between 1x and 3x
+  };
+
   const handleUploadImgbb = () => {
     if (!imgbbKey) {
       alert("Please enter your ImgBB API key in the settings first.");
@@ -343,6 +353,7 @@ function App() {
     toPng(exportRef.current, { 
       backgroundColor: '#ffffff', 
       filter: filterExport, 
+      pixelRatio: getSafePixelRatio(exportRef.current),
       style: { position: 'relative', left: '0px', top: '0px' }
     })
       .then((dataUrl) => {
@@ -377,6 +388,7 @@ function App() {
     toPng(exportRef.current, { 
       backgroundColor: '#ffffff', 
       filter: filterExport, 
+      pixelRatio: getSafePixelRatio(exportRef.current),
       style: { position: 'relative', left: '0px', top: '0px' }
     })
       .then((dataUrl) => {
