@@ -348,6 +348,15 @@ function App() {
       setShowSettings(true);
       return;
     }
+    
+    const hasUnlabeledColors = paletteColors.some(c => !legendMap[c] || !legendMap[c].trim());
+    if (hasUnlabeledColors) {
+      if (!window.confirm("You have unlabeled colors in your Map Key. Do you want to export anyway? (Click Cancel to add labels in Map Details)")) {
+        setShowMapDetails(true);
+        return;
+      }
+    }
+
     if (!exportRef.current) return;
     
     const config = { 
@@ -387,6 +396,14 @@ function App() {
   };
 
   const handleExportImage = () => {
+    const hasUnlabeledColors = paletteColors.some(c => !legendMap[c] || !legendMap[c].trim());
+    if (hasUnlabeledColors) {
+      if (!window.confirm("You have unlabeled colors in your Map Key. Do you want to export anyway? (Click Cancel to add labels in Map Details)")) {
+        setShowMapDetails(true);
+        return;
+      }
+    }
+
     if (!exportRef.current) return;
 
     const config = { 
