@@ -43,6 +43,16 @@ export const MapGrid = forwardRef(({ cellColors, activeColor, onCellPointerDown,
       if (transformRef.current) {
         transformRef.current.resetTransform();
       }
+    },
+    zoomIn: () => {
+      if (transformRef.current) {
+        transformRef.current.zoomIn(0.5);
+      }
+    },
+    zoomOut: () => {
+      if (transformRef.current) {
+        transformRef.current.zoomOut(0.5);
+      }
     }
   }));
 
@@ -407,7 +417,7 @@ export const MapGrid = forwardRef(({ cellColors, activeColor, onCellPointerDown,
         }}
         pinch={{ disabled: false }}
         doubleClick={{ disabled: false, mode: 'reset' }}
-        wheel={{ disabled: false, step: 0.02 }}
+        wheel={{ step: 0.2, smoothStep: 0.005 }}
         style={{ width: "100%", height: "100%" }}
       >
         <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
