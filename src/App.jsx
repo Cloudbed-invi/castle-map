@@ -27,6 +27,19 @@ function App() {
   const [cellColors, setCellColors] = useState({});
   const [paletteColors, setPaletteColors] = useState(initialColors);
   const [activeColor, setActiveColor] = useState('#f472b6'); // Default to first color
+
+  // Debounced palette addition: automatically add new activeColor to palette after 500ms of no changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPaletteColors(prev => {
+        if (!prev.includes(activeColor)) {
+          return [...prev, activeColor];
+        }
+        return prev;
+      });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [activeColor]);
   const [legendMap, setLegendMap] = useState({});
   const [paintState, setPaintState] = useState(null); // 'paint' or 'erase'
   const [history, setHistory] = useState([]);
@@ -529,11 +542,6 @@ function App() {
                  type="color" 
                  className="color-picker-input"
                  onChange={(e) => setActiveColor(e.target.value)}
-                 onBlur={(e) => {
-                   if (!paletteColors.includes(e.target.value)) {
-                     setPaletteColors(prev => [...prev, e.target.value]);
-                   }
-                 }}
                  title="Add custom color"
                />
                <div className="color-picker-btn" style={{ fontSize: '1.2rem' }}>+</div>
