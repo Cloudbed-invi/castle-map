@@ -672,7 +672,8 @@ function App() {
             top: 0, 
             zIndex: -9999,
             opacity: 0.001,
-            width: '840px', 
+            width: '840px',
+            minHeight: '840px',
             backgroundColor: 'white', 
             padding: '20px',
             pointerEvents: 'none'
