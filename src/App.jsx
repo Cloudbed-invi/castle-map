@@ -350,12 +350,16 @@ function App() {
     }
     if (!exportRef.current) return;
     
-    toPng(exportRef.current, { 
+    const config = { 
       backgroundColor: '#ffffff', 
       filter: filterExport, 
       pixelRatio: getSafePixelRatio(exportRef.current),
-      style: { position: 'relative', left: '0px', top: '0px' }
-    })
+      style: { position: 'relative', left: '0px', top: '0px', opacity: 1 }
+    };
+
+    // Call twice to bypass iOS Safari SVG cold-cache bug
+    toPng(exportRef.current, config)
+      .then(() => toPng(exportRef.current, config))
       .then((dataUrl) => {
         const base64Data = dataUrl.split(',')[1];
         const formData = new FormData();
@@ -385,12 +389,15 @@ function App() {
   const handleExportImage = () => {
     if (!exportRef.current) return;
 
-    toPng(exportRef.current, { 
+    const config = { 
       backgroundColor: '#ffffff', 
       filter: filterExport, 
       pixelRatio: getSafePixelRatio(exportRef.current),
-      style: { position: 'relative', left: '0px', top: '0px' }
-    })
+      style: { position: 'relative', left: '0px', top: '0px', opacity: 1 }
+    };
+
+    toPng(exportRef.current, config)
+      .then(() => toPng(exportRef.current, config))
       .then((dataUrl) => {
         const link = document.createElement('a');
         link.download = 'sunfire-map.png';
@@ -660,9 +667,11 @@ function App() {
           className="export-container" 
           ref={exportRef} 
           style={{ 
-            position: 'absolute', 
-            left: '-9999px', 
+            position: 'fixed', 
+            left: 0, 
             top: 0, 
+            zIndex: -9999,
+            opacity: 0.001,
             width: '840px', 
             backgroundColor: 'white', 
             padding: '20px',
