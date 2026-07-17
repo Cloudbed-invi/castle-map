@@ -34,8 +34,10 @@ function getLuminance(hex) {
 export const MapGrid = forwardRef(({ cellColors, activeColor, onCellPointerDown, onCellPointerEnter, zigzagColor, lines, setLines, floatingTexts, setFloatingTexts, selectedTextId, setSelectedTextId, mapTitle, mapSubtitle, interactionMode = 'draw', isExport = false }, ref) => {
   const SIZE = 24; 
   const svgRef = useRef(null);
+  const containerRef = useRef(null);
   const transformRef = useRef(null);
   const lastRightClickTime = useRef(0);
+  const lastWheelTime = useRef(0);
   const [dragState, setDragState] = useState(null); // { id, cIndex, controlsU, nodeType, pointerId }
 
   useImperativeHandle(ref, () => ({
@@ -55,6 +57,29 @@ export const MapGrid = forwardRef(({ cellColors, activeColor, onCellPointerDown,
       }
     }
   }));
+
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e) => {
+      e.preventDefault(); // Prevent native page scroll
+      if (!transformRef.current) return;
+      
+      const now = Date.now();
+      if (now - lastWheelTime.current < 50) return; // Throttle to prevent crazy runaway zooming
+      lastWheelTime.current = now;
+
+      if (e.deltaY > 0) {
+        transformRef.current.zoomOut(0.5);
+      } else {
+        transformRef.current.zoomIn(0.5);
+      }
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, []);
 
   const cells = [];
   const labelCells = [];
@@ -403,7 +428,7 @@ export const MapGrid = forwardRef(({ cellColors, activeColor, onCellPointerDown,
   };
 
   return (
-    <div className="map-container" style={{ padding: 0 }} onContextMenu={handleContextMenu}>
+    <div className="map-container" ref={containerRef} style={{ padding: 0 }} onContextMenu={handleContextMenu}>
       <TransformWrapper
         ref={transformRef}
         initialScale={1}
@@ -417,7 +442,7 @@ export const MapGrid = forwardRef(({ cellColors, activeColor, onCellPointerDown,
         }}
         pinch={{ disabled: false }}
         doubleClick={{ disabled: false, mode: 'reset' }}
-        wheel={{ step: 0.2, smoothStep: 0.005 }}
+        wheel={{ disabled: true }}
         style={{ width: "100%", height: "100%" }}
       >
         <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
