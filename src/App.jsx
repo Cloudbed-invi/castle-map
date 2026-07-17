@@ -330,7 +330,6 @@ function App() {
     toPng(exportRef.current, { 
       backgroundColor: '#ffffff', 
       filter: filterExport, 
-      pixelRatio: 3,
       style: { position: 'relative', left: '0px', top: '0px' }
     })
       .then((dataUrl) => {
@@ -365,7 +364,6 @@ function App() {
     toPng(exportRef.current, { 
       backgroundColor: '#ffffff', 
       filter: filterExport, 
-      pixelRatio: 3,
       style: { position: 'relative', left: '0px', top: '0px' }
     })
       .then((dataUrl) => {
@@ -530,7 +528,12 @@ function App() {
                <input 
                  type="color" 
                  className="color-picker-input"
-                 onChange={(e) => handleAddColor(e.target.value)}
+                 onChange={(e) => setActiveColor(e.target.value)}
+                 onBlur={(e) => {
+                   if (!paletteColors.includes(e.target.value)) {
+                     setPaletteColors(prev => [...prev, e.target.value]);
+                   }
+                 }}
                  title="Add custom color"
                />
                <div className="color-picker-btn" style={{ fontSize: '1.2rem' }}>+</div>
