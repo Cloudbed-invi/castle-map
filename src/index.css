@@ -159,6 +159,10 @@ body {
 
 /* --- MOBILE LAYOUT --- */
 @media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+
   .header {
     display: none;
   }

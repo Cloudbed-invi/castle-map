@@ -452,6 +452,7 @@ function App() {
                 🖐️ Pan
               </button>
               <button
+                className="desktop-only"
                 onClick={() => mapGridRef.current?.zoomOut()}
                 title="Zoom Out"
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 12px', fontSize: '1.2rem', fontWeight: 'bold' }}
@@ -459,6 +460,7 @@ function App() {
                 −
               </button>
               <button
+                className="desktop-only"
                 onClick={() => mapGridRef.current?.zoomIn()}
                 title="Zoom In"
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 12px', fontSize: '1.2rem', fontWeight: 'bold' }}
